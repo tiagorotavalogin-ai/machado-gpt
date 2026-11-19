@@ -264,3 +264,19 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   limite conhecido.
 - **Resultado:** 113 obras extraídas, 1.704.663 palavras.
 - **Responsável:** proprietário.
+
+## 2026-11-19: Divisão por obra, duplicatas e catálogo final
+
+- **Grupos:** obras com 50 ou mais sequências de 8 palavras em comum ficam no mesmo
+  conjunto (versões da mesma obra e poemas republicados).
+- **Duplicatas:** obra com 90% ou mais do texto contido em outra sai do corpus
+  (*Crítica Teatral* e *A Mãe*, contidas em *Revista Dramática*).
+- **Divisão:** por gênero, em ordem de SHA-256 de `machado-gpt-split-v1:grupo`;
+  validação e teste com ~10% das palavras de cada gênero (até 125% do alvo); se um
+  conjunto ficar vazio num gênero, recebe o primeiro grupo com até 25% do gênero.
+- **Resultado:** 110 obras; treino 1.300.828 palavras (77%), validação 213.246
+  (13%), teste 173.198 (10%); todo gênero nos três conjuntos. Sequências de 8
+  palavras da validação e do teste presentes no treino: 0,014% e 0,013%.
+- **Catálogo:** `data/catalog/works.csv`, versionado; textos em `data/processed/`,
+  fora do Git.
+- **Responsável:** proprietário.

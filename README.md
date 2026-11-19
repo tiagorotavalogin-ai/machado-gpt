@@ -3,10 +3,10 @@
 Um modelo de linguagem pequeno, treinado do zero com a obra de Machado de Assis,
 construído passo a passo para aprender como um LLM funciona por dentro.
 
-> **Estado:** etapa 1 (corpus). Extração completa: 113 obras, 1,7 milhão de
-> palavras, com traduções e textos de outros autores removidos. Próximo passo:
-> catálogo das obras, divisão treino/validação/teste por obra e estatísticas. O
-> passo a passo explicado está em [docs/etapas/01-corpus.md](docs/etapas/01-corpus.md).
+> **Estado:** etapa 1 (corpus) com critérios de pronto atendidos: 110 obras,
+> 1,69 milhão de palavras, divididas por obra em treino, validação e teste. Próxima
+> etapa: modelo bigrama. O passo a passo explicado está em
+> [docs/etapas/01-corpus.md](docs/etapas/01-corpus.md).
 
 ## O que é
 

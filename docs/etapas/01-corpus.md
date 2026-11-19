@@ -861,24 +861,129 @@ padrão já identificado (espaço depois de hífen, `***`, a mensagem de imagem 
 
 ---
 
+## 12. Catálogo, divisão por obra e estatísticas
+
+### Conceito: por que dividir por obra
+
+Treinamos o modelo num conjunto (**treino**) e medimos a qualidade em textos que
+ele nunca viu: **validação** (usada durante o desenvolvimento, para escolher
+hiperparâmetros e comparar versões) e **teste** (guardado para a medição final).
+Se um parágrafo de *Dom Casmurro* estiver no treino e o seguinte na validação, o
+modelo já viu os personagens, as frases e o assunto, e a validação passa a medir
+memória, não generalização. Por isso a divisão é feita **por obra inteira**.
+
+E não basta separar arquivos: a mesma obra pode estar em dois arquivos.
+
+### Procurando a mesma obra em dois arquivos
+
+Para cada par de obras, contamos as **sequências de 8 palavras seguidas** em comum.
+Frases de 8 palavras raramente se repetem por acaso; muitas em comum indicam texto
+repetido.
+
+| Par | Parte da menor contida na outra | O que é |
+|---|---:|---|
+| *Crítica Teatral* ↔ *Revista Dramática* | 98,6% | coletânea dos mesmos folhetins |
+| *A Mãe* ↔ *Revista Dramática* | 94,0% | idem |
+| *Entre 1892 e 1894* ↔ *A Semana* | 70,0% | crônicas publicadas nas duas coleções |
+| *Contos Fluminenses* ↔ *As Forcas Caudinas* | 27,2% | a peça reescrita como conto: duas versões |
+| 4 pares de poesia com prosa ou outra poesia | até 5,6% | poemas de Machado republicados em outro livro |
+
+Duas consequências:
+
+- **Grupos:** obras com 50 ou mais sequências em comum formam um grupo, e o grupo
+  inteiro vai para o mesmo conjunto (o agrupamento é transitivo).
+- **Duplicatas:** uma obra com 90% ou mais do texto dentro de outra sai do corpus
+  (*Crítica Teatral* e *A Mãe*), porque o texto repetido pesaria em dobro no treino.
+  Fica a obra maior; nenhuma palavra se perde.
+
+### Conceito: aleatório, mas reproduzível
+
+A ordem das obras para o sorteio é dada pelo **SHA-256** de `semente:nome do grupo`.
+Um hash espalha os nomes de modo que parece aleatório, mas é sempre igual: qualquer
+pessoa, em qualquer máquina, obtém a mesma divisão, que não depende da ordem dos
+arquivos nem de um gerador de números aleatórios. Trocar a semente gera outra
+divisão, igualmente reproduzível.
+
+### A regra de divisão
+
+Por **gênero**, para que cada conjunto tenha romance, poesia, crônica...:
+
+1. percorrer os grupos na ordem do hash e preencher teste e validação até ~10% das
+   palavras do gênero cada; um grupo que passaria de 125% do alvo vai para o treino
+   (por isso *A Semana*, com 16% do corpus sozinha, fica no treino);
+2. se um conjunto ficar vazio num gênero, ele recebe o primeiro grupo, na ordem do
+   hash, com até 25% do gênero.
+
+A segunda regra nasceu de uma medição: na primeira versão, **a poesia ficou inteira
+no treino** (os livros têm 15 a 20 mil palavras, acima do limite de 12 mil) e o
+conto ficou sem validação. Sem poesia na validação, não saberíamos como o modelo se
+sai em verso.
+
+### Resultado
+
+| Gênero | Treino | Validação | Teste |
+|---|---:|---:|---:|
+| romance | 419.805 (7 obras) | 56.247 (1) | 59.136 (2) |
+| conto | 226.545 (5) | 50.415 (1) | 22.565 (1) |
+| poesia | 69.257 (5) | 15.299 (1) | 13.184 (1) |
+| teatro | 48.321 (7) | 5.948 (1) | 5.047 (1) |
+| crônica | 414.719 (8) | 68.170 (10) | 56.371 (6) |
+| crítica | 112.851 (24) | 15.985 (9) | 15.754 (10) |
+| miscelânea | 9.330 (7) | 1.182 (1) | 1.141 (2) |
+| **palavras** | **1.300.828 (77%)** | **213.246 (13%)** | **173.198 (10%)** |
+| **caracteres** | 7.463.240 | 1.245.299 | 997.937 |
+
+São 110 obras no corpus (113 extraídas, menos 2 duplicatas e *Hoje avental, amanhã
+luva*, excluída pela lista manual), com cerca de 1,69 milhão de palavras e 9,7
+milhões de caracteres.
+
+**Conferência nos arquivos finais:** das sequências de 8 palavras da validação,
+0,014% também aparecem no treino; no teste, 0,013%. São frases comuns ("entrou a
+andar de um lado para outro") e uma citação da *Ilíada* que Machado usa em crônicas
+diferentes, e não texto repetido de uma obra.
+
+### Arquivos
+
+- [`data/catalog/works.csv`](../../data/catalog/works.csv) (versionado): uma linha
+  por obra, com gênero, conjunto, situação, grupo, palavras, caracteres, edição de
+  referência, fonte, licença, SHA-256 do PDF e do texto limpo.
+- `data/processed/{train,val,test}.txt` (fora do Git): o texto de cada conjunto.
+  Parágrafos e estrofes são separados por uma linha em branco; obras, por duas.
+- Código: [`src/machado_gpt/corpus/build.py`](../../src/machado_gpt/corpus/build.py).
+  O teste `test_catalog_has_no_leakage_between_splits` lê o catálogo real e falha se
+  um grupo estiver em dois conjuntos.
+
+---
+
+## Etapa 1: critérios de pronto (PRD)
+
+| Critério | Situação |
+|---|---|
+| Catálogo com fonte, edição, licença e hash de cada texto | `data/catalog/works.csv` |
+| Textos limpos, sem notas ou prefácios de editores modernos | seções 6 a 11 |
+| Divisão por obra reproduzível (hash determinístico) | seção 12, com teste de vazamento |
+| Estatísticas do corpus | seção 12 |
+
+**Limites conhecidos, registrados:** citações em verso de outros poetas dentro de
+críticas e crônicas ficam no corpus; parágrafos e estrofes nas quebras de página são
+inferidos; a lista manual de exclusões cobre o que encontramos, não tudo o que pode
+existir.
+
 ## Como reproduzir esta etapa até aqui
 
 ```bash
 uv sync
-uv run pytest                                    # 73 testes
+uv run pytest                                    # 82 testes
 uv run python -m machado_gpt.corpus.download     # baixa e verifica (~31 MB)
 uv run python -m machado_gpt.corpus.inspect_pdfs # inspeção (~6,5 min na CPU)
 uv run python -m machado_gpt.corpus.extract romance/domCasmurro.pdf  # ou várias obras (todas: ~6 min)
 uv run python -m machado_gpt.corpus.compare romance conto
+uv run python -m machado_gpt.corpus.build                # catálogo e divisão
 ```
 
 ## Próximo passo
 
-A extração está completa. Para fechar a etapa 1 (ver critérios no PRD), faltam:
-
-1. **Catálogo das obras:** uma linha por obra com gênero, fonte, edição de
-   referência (do cabeçalho da edição), licença, SHA-256 do PDF e do texto limpo.
-2. **Divisão treino/validação/teste por obra**, com hash determinístico e teste que
-   garanta que nenhuma obra aparece em dois conjuntos.
-3. **Estatísticas do corpus:** caracteres, palavras e obras por gênero e por
-   conjunto.
+**Etapa 2: modelo bigrama.** O modelo mais simples possível: prever o próximo
+caractere olhando só o caractere atual. Primeiro por contagem (uma tabela), depois
+como uma rede em PyTorch que aprende a mesma tabela por gradiente. A perda de
+validação dele será a linha de base que todo modelo seguinte precisa superar.
