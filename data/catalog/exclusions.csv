@@ -1,0 +1,35 @@
+obra,inicio,fim_antes_de,tipo,autor_original,fonte,acao,observacao
+poesia/crisalidas,LÚCIA,O DILÚVIO,traducao,Alfred de Musset,"subtítulo no PDF: ""(Alfred de Musset)""",excluir,
+poesia/crisalidas,A JOVEM CATIVA,NO LIMIAR,traducao,André Chénier,"subtítulo no PDF: ""(André Chenier)""; nota de Machado [ii]: ""o arrojo de traduzir a maviosa elegia de Chenier""",excluir,
+poesia/crisalidas,CLEÓPATRA,OS ARLEQUINS,traducao,Mme. Émile de Girardin,"nota de Machado [iii]: ""canto ... de que fiz esta mal amanhada paráfrase""",excluir,
+poesia/crisalidas,AS ONDINAS,MARIA DUPLESSIS,traducao,Heinrich Heine,"subtítulo no PDF: ""(Noturno de H. Heine)""",excluir,
+poesia/crisalidas,MARIA DUPLESSIS,AS ROSAS,traducao,Alexandre Dumas Filho,"subtítulo no PDF: ""(A. Dumas Filho)""; nota de Machado [v]: ""tradução livre ou paráfrase""",excluir,
+poesia/crisalidas,ALPUJARRA,VERSOS A CORINA,traducao,Adam Mickiewicz,"subtítulo no PDF: ""(Mickiewicz)""; nota de Machado [viii]: ""extraído de um poema do poeta polaco Mickiewicz""",excluir,
+poesia/crisalidas,EMBIRRAÇÃO,POSFÁCIO,outro_autor,Faustino Xavier de Novais,"subtítulo no PDF: ""(A Machado de Assis)""; nota de Machado: ""é a resposta que me deu o meu amigo F. X. de Novaes""",excluir,
+poesia/crisalidas,E ao som dos nossos cânticos; etc.,,nota_do_autor,,"seção de notas de Machado no fim do livro, no tamanho do corpo e sem marcador [n]",excluir,decisão de 2026-11-19: nenhuma nota entra no corpus
+poesia/falenas,A ELVIRA,LÁGRIMAS DE CERA,traducao,Alphonse de Lamartine,"subtítulo no PDF: ""(LAMARTINE)""",excluir,
+poesia/falenas,UN VIEUX PAYS,LUZ ENTRE SOMBRAS,lingua_estrangeira,,"nota de Machado [2]: ""Perdoem-se estes versos em francês""",excluir,poema do próprio Machado escrito em francês; excluído por decisão do proprietário em 2026-11-19
+poesia/falenas,LIRA CHINESA,UMA ODE DE ANACREONTE,traducao,poetas chineses (via Judith Walter),"subtítulos no PDF com o nome de cada poeta; nota de Machado [3]: poemas que Judith Walter ""traduziu em simples e corrente prosa""",excluir,os 8 poemas da Lira Chinesa
+poesia/falenas,"""Fez-se Niobe em pedra",CLEON,outro_autor,Anacreonte (tradução de A. F. de Castilho),"nota de Machado [4]: ""É do Sr. Antônio Feliciano de Castilho a tradução desta odezinha""",excluir,"só a ode citada; o resto de ""Uma Ode de Anacreonte"" é de Machado"
+poesia/falenas,OS DEUSES DA GRÉCIA,CEGONHAS E RODOVALHOS,traducao,Friedrich Schiller,"subtítulo no PDF: ""(Schiller)""; nota de Machado [5]: ""traduzi estes versos pela tradução em prosa francesa""",excluir,
+poesia/falenas,CEGONHAS E RODOVALHOS,A UM LEGISTA,traducao,Louis Bouilhet,"subtítulo no PDF: ""(BOUILLET)""",excluir,
+poesia/falenas,ESTÂNCIAS A EMA,A MORTE DE OFÉLIA,traducao,Alexandre Dumas Filho,"subtítulo no PDF: ""(ALEX. DUMAS FILHO)""",excluir,
+poesia/falenas,A MORTE DE OFÉLIA,FIM,traducao,William Shakespeare,"subtítulo no PDF: ""(Paráfrase)""",excluir,"o PDF não nomeia o original; o conteúdo corresponde à fala da rainha em Hamlet, ato IV, cena 7 (identificação nossa)"
+poesia/americanas,"Os Tamoios, entre outras presas",I,epigrafe,Simão de Vasconcelos,"atribuição no PDF: ""VASC., CR. DA COMPANHIA DE JESUS, LIV. 3º""",excluir,epígrafe de Potira sem recuo; a regra automática não detecta
+poesia/americanas,...Eis aí saiu o que semeia a semear...,Vós os que hoje colheis,epigrafe,Evangelho de Mateus,"atribuição no PDF: ""MAT., XIII, 3.""",excluir,epígrafe de Os Semeadores sem recuo
+poesia/americanas,CANTIGA DO ROSTO BRANCO,,traducao,canto indígena (via Chateaubriand),"nota de Machado [25]: ""Não é original esta composição ... foi traduzida da língua deles por Chateaubriand""",excluir,
+poesia/ocidentais,O CORVO,PERGUNTAS SEM RESPOSTA,traducao,Edgar Allan Poe,"subtítulo no PDF: ""(EDGAR POE)""",excluir,
+poesia/ocidentais,TO BE OR NOT TO BE,LINDÓIA,traducao,William Shakespeare,"subtítulo no PDF: ""(SHAKESPEARE)""",excluir,
+poesia/ocidentais,OS ANIMAIS ISCADOS DA PESTE,DANTE,traducao,Jean de La Fontaine,"subtítulo no PDF: ""(LA FONTAINE)""",excluir,
+poesia/ocidentais,DANTE,A FELÍCIO DOS SANTOS,traducao,Dante Alighieri,"subtítulo no PDF: ""(INFERNO, canto XXV)""",excluir,
+poesia/dispersas,MINHA MÃE,O SOFÁ,imitacao,William Cowper,"subtítulo no PDF: ""(Imitação de Cowper)""",excluir,imitação: mais livre que tradução; excluído por decisão do proprietário em 2026-11-19
+poesia/dispersas,"Quanto eu, pobre de mim!",Quem foi que o berço,epigrafe,C. A. de Sá,"atribuição no PDF: ""C. A. DE SÁ""",excluir,epígrafe de Minha Mãe sem recuo
+poesia/dispersas,O CASAMENTO DO DIABO,HINO PATRIÓTICO,imitacao,poema alemão não identificado,"subtítulo no PDF: ""(Imitação do alemão)""",excluir,imitação: mais livre que tradução; excluído por decisão do proprietário em 2026-11-19
+poesia/dispersas,REFUS,ENTRA CANTANDO,lingua_estrangeira,,poema em francês no PDF,excluir,poema do próprio Machado escrito em francês; excluído por decisão do proprietário em 2026-11-19
+poesia/dispersas,PRÓLOGO DO INTERMEZZO,A CAROLINA,traducao,Heinrich Heine,"subtítulo no PDF: ""(H. Heine)""",excluir,
+poesia/dispersas,SOUVENIRS D'EXIL,A S. M. I.,traducao,Charles Ribeyrolles,"subtítulo no PDF: ""(tradução de poema de CHARLES RIBEYROLLES)""",excluir,
+poesia/dispersas,O PRIMEIRO BEIJO,A. F. X. DE NOVAIS,traducao,Guillermo Blest Gana,"subtítulo no PDF: ""(G. BLEST GANA)""",excluir,
+teatro/aventalLuva,"Hoje avental, amanhã luva",,imitacao,autor francês não identificado,"subtítulo no PDF: ""Comédia em um ato imitada do francês por Machado de Assis""",excluir,peça inteira; mesma decisão das imitações em poesia
+teatro/caminhoProtocolo,CARTA AO AUTOR,O CAMINHO DA PORTA,outro_autor,Quintino Bocaiúva,"a carta abre com ""Machado de Assis, Respondo à tua carta"", em resposta à ""CARTA A QUINTINO BOCAIÚNA"" que a precede",excluir,
+teatro/deuses,NOTA,FIM,nota_do_autor,,"seção ""NOTA"" de Machado no fim da peça, no tamanho do corpo",excluir,decisão de 2026-11-19: nenhuma nota entra no corpus
+teatro/tuAmor,"Tu só, tu, puro amor, com força crua",O desfecho dos amores,epigrafe,Luís de Camões,"atribuição no PDF: ""Camões, Lusíadas, 3, CXIX.""",excluir,epígrafe de título em caixa mista; a regra automática não detecta
