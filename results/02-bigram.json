@@ -1,0 +1,110 @@
+{
+  "vocab_size": 144,
+  "uniform_val": {
+    "nats_per_char": 4.969813299576001,
+    "bits_per_char": 7.169925001442313,
+    "bits_per_byte": 6.950537107145383,
+    "perplexity": 144.0
+  },
+  "unigram_val": {
+    "nats_per_char": 3.1089275602988113,
+    "bits_per_char": 4.485234373726119,
+    "bits_per_byte": 4.347993590247626,
+    "perplexity": 22.397012071504218
+  },
+  "bigram_count": {
+    "alpha": 0.1,
+    "train": {
+      "nats_per_char": 2.373286076950416,
+      "bits_per_char": 3.423928053827188,
+      "bits_per_byte": 3.3135929928747165,
+      "perplexity": 10.732602558476675
+    },
+    "val": {
+      "nats_per_char": 2.383340919780485,
+      "bits_per_char": 3.438434125715047,
+      "bits_per_byte": 3.3332237054710996,
+      "perplexity": 10.841061545630224
+    },
+    "val_by_alpha": {
+      "0.001": 2.384322427443629,
+      "0.01": 2.3837383240633216,
+      "0.1": 2.383340919780485,
+      "0.5": 2.383659316689377,
+      "1.0": 2.3842578178168186,
+      "2.0": 2.3854553194179267,
+      "5.0": 2.3888180007694593
+    },
+    "sample": "Capituempo Gomené ssodintiramivim, quao ncitomintre impartumatititos fo J. O qumamorgoraçõe dera, hor de arado\nFlentanuntode hos ri, go dantrrgacom.\n\nNãoncas cemãos inão e a. oró qu palelhas puemefaunanho vecidari to: eubo lendeubo m uebi Quendum e-ssas, lansem éceláva, pacasse seso des póris ajue Chaça came alta l asss nue dis querr ra Jumareserepas doma ma. vre cor.\nA amo e lo co A Re; da.. qua coumba"
+  },
+  "bigram_neural": {
+    "steps": 3000,
+    "batch_size": 32768,
+    "learning_rate": 50.0,
+    "history": [
+      {
+        "step": 0,
+        "train": 4.969813299576002,
+        "val": 4.969813299576001
+      },
+      {
+        "step": 300,
+        "train": 2.4513061737597357,
+        "val": 2.4565798944264228
+      },
+      {
+        "step": 600,
+        "train": 2.417363390778465,
+        "val": 2.423738971576384
+      },
+      {
+        "step": 900,
+        "train": 2.4047225836461408,
+        "val": 2.4121892866104258
+      },
+      {
+        "step": 1200,
+        "train": 2.39812524733578,
+        "val": 2.406032175109807
+      },
+      {
+        "step": 1500,
+        "train": 2.394050049181705,
+        "val": 2.402386094806519
+      },
+      {
+        "step": 1800,
+        "train": 2.3912118231165,
+        "val": 2.399704743064851
+      },
+      {
+        "step": 2100,
+        "train": 2.3890742332587447,
+        "val": 2.3978499309701684
+      },
+      {
+        "step": 2400,
+        "train": 2.387373534817752,
+        "val": 2.396242164440032
+      },
+      {
+        "step": 2700,
+        "train": 2.386131955514287,
+        "val": 2.395213380642289
+      },
+      {
+        "step": 3000,
+        "train": 2.385035388052189,
+        "val": 2.3941049640694785
+      }
+    ],
+    "val": {
+      "nats_per_char": 2.3941049640694785,
+      "bits_per_char": 3.453963359030687,
+      "bits_per_byte": 3.3482777698280017,
+      "perplexity": 10.958385519667198
+    },
+    "difference_to_counting": 0.010764044288993357,
+    "sample": "Capituempo Gomentãosodinçõevam nda? dao ncitomintre impartumatititos fo Já O qumasorgoraçõe dera, hor de a puvalé do.\nN. quve, s ri, go dantrrgacom.\n\nNãoncas cemãos inão e a. oró qu palelhas puemefaunanho vecidari to: eubo lendeubo m uebi Quendum e-ssas, lan+“2.\n\n\n\nM=çõelacasse seso des pó86W=Jjue Chaça came a ta l asss nue dis qudar ra Jumareserepas doma ma. vre cor.\nA amo e lo co A Re; da.. qua coumba"
+  }
+}
