@@ -280,3 +280,18 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Catálogo:** `data/catalog/works.csv`, versionado; textos em `data/processed/`,
   fora do Git.
 - **Responsável:** proprietário.
+
+## 2026-11-19: Etapa 2, ambiente e convenções de medida
+
+- **PyTorch CPU e NumPy:** dependências do projeto (Apache-2.0/BSD). Localmente usa
+  a versão só CPU do PyTorch (índice `pytorch-cpu` no `pyproject.toml`), porque as
+  etapas 2 a 4 rodam em CPU; o Colab tem a sua própria versão com GPU.
+- **Vocabulário de caracteres só do treino,** com um símbolo de desconhecido
+  (U+FFFD) para caracteres ausentes do treino (1 ocorrência na validação, `½`).
+- **Medidas:** perda em nats por caractere (principal), bits por caractere, bits
+  por byte UTF-8 (para comparar com o BPE) e perplexidade.
+- **Resultados versionados** em `results/` (métricas e amostras, sem pesos);
+  tabelas e pesos em `runs/`, fora do Git.
+- **Linha de base:** bigrama por contagem, 2,383 nats/caractere (3,33 bits/byte) na
+  validação. Detalhes em [docs/etapas/02-bigrama.md](etapas/02-bigrama.md).
+- **Responsável:** proprietário.

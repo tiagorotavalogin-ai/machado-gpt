@@ -3,10 +3,9 @@
 Um modelo de linguagem pequeno, treinado do zero com a obra de Machado de Assis,
 construído passo a passo para aprender como um LLM funciona por dentro.
 
-> **Estado:** etapa 1 (corpus) com critérios de pronto atendidos: 110 obras,
-> 1,69 milhão de palavras, divididas por obra em treino, validação e teste. Próxima
-> etapa: modelo bigrama. O passo a passo explicado está em
-> [docs/etapas/01-corpus.md](docs/etapas/01-corpus.md).
+> **Estado:** etapas 1 (corpus) e 2 (bigrama) concluídas. Linha de base: 2,383
+> nats por caractere na validação. Próxima etapa: GPT por caracteres. Diários:
+> [corpus](docs/etapas/01-corpus.md), [bigrama](docs/etapas/02-bigrama.md).
 
 ## O que é
 
