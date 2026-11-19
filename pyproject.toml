@@ -5,7 +5,9 @@ description = "A small language model trained from scratch on the works of Macha
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "numpy>=2.5.5",
     "pdfplumber>=0.11.10",
+    "torch>=2.4",
 ]
 
 [dependency-groups]
@@ -20,3 +22,12 @@ packages = ["src/machado_gpt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# PyTorch CPU-only build for local stages (2-4); Colab provides its own GPU build.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
