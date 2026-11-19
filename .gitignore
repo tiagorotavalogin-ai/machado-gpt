@@ -1,0 +1,46 @@
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+config.local.*
+
+# Dependências e builds
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+dist/
+build/
+.next/
+coverage/
+
+# Logs e dados locais
+*.log
+*.sqlite
+*.db
+data/raw/
+
+# Editor e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Corpus, modelos e artefatos de treino (grandes; publicar fora do Git)
+data/raw/
+data/interim/
+data/processed/
+checkpoints/
+runs/
+wandb/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.gguf
+.ipynb_checkpoints/
