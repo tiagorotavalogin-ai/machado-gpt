@@ -1,0 +1,22 @@
+[project]
+name = "machado-gpt"
+version = "0.1.0"
+description = "A small language model trained from scratch on the works of Machado de Assis."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pdfplumber>=0.11.10",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/machado_gpt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
