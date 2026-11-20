@@ -1,0 +1,122 @@
+{
+  "sweep": [
+    {
+      "vocab_size": 256,
+      "val_bytes_per_token": 1.0,
+      "bytes_in_128_tokens": 128.0,
+      "train_tokens": 7711942,
+      "merges_under_50_occurrences": 0.0,
+      "median_occurrences_per_merge": 0
+    },
+    {
+      "vocab_size": 512,
+      "val_bytes_per_token": 2.030033057537814,
+      "bytes_in_128_tokens": 259.8442313648402,
+      "train_tokens": 3776720,
+      "merges_under_50_occurrences": 0.0,
+      "median_occurrences_per_merge": 6292
+    },
+    {
+      "vocab_size": 1024,
+      "val_bytes_per_token": 2.5179495421475164,
+      "bytes_in_128_tokens": 322.2975413948821,
+      "train_tokens": 3030831,
+      "merges_under_50_occurrences": 0.009114583333333334,
+      "median_occurrences_per_merge": 1552
+    },
+    {
+      "vocab_size": 2048,
+      "val_bytes_per_token": 2.9476787808006386,
+      "bytes_in_128_tokens": 377.30288394248174,
+      "train_tokens": 2577007,
+      "merges_under_50_occurrences": 0.01953125,
+      "median_occurrences_per_merge": 500
+    },
+    {
+      "vocab_size": 4096,
+      "val_bytes_per_token": 3.3589777781263974,
+      "bytes_in_128_tokens": 429.94915560017887,
+      "train_tokens": 2251901,
+      "merges_under_50_occurrences": 0.06510416666666667,
+      "median_occurrences_per_merge": 178
+    },
+    {
+      "vocab_size": 8192,
+      "val_bytes_per_token": 3.7578188072589422,
+      "bytes_in_128_tokens": 481.0008073291446,
+      "train_tokens": 2013287,
+      "merges_under_50_occurrences": 0.35131048387096775,
+      "median_occurrences_per_merge": 66
+    },
+    {
+      "vocab_size": 16384,
+      "val_bytes_per_token": 4.098680117535581,
+      "bytes_in_128_tokens": 524.6310550445544,
+      "train_tokens": 1850565,
+      "merges_under_50_occurrences": 0.7535342261904762,
+      "median_occurrences_per_merge": 23
+    }
+  ],
+  "vocab_size": 4096,
+  "tokenizer_sha256": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+  "splits": {
+    "train": {
+      "tokens": 2251901,
+      "bytes": 7711942,
+      "bytes_per_token": 3.424636340585132,
+      "sha256": "04c378aea5752aa6ab8c9a4798a0d0e05a76710268bd19ce80b3974839b008a9"
+    },
+    "val": {
+      "tokens": 382461,
+      "bytes": 1284678,
+      "bytes_per_token": 3.3589777781263974,
+      "sha256": "455b44c99579616d433517d111f9e619c0e405123e59b6ef9b94abc8bf22768c"
+    },
+    "test": {
+      "tokens": 306518,
+      "bytes": 1030708,
+      "bytes_per_token": 3.3626344945484443,
+      "sha256": "157fe18bf406e22831d27c2586aaa5003df3ad09b965ef0dcb0b9fc797fd043b"
+    }
+  },
+  "example": {
+    "text": "Não consultes dicionários. Casmurro não está aqui no sentido que eles lhe dão.",
+    "tokens": [
+      "Não",
+      " consul",
+      "tes",
+      " d",
+      "ic",
+      "ion",
+      "ários",
+      ".",
+      " Cas",
+      "m",
+      "ur",
+      "ro",
+      " não",
+      " está",
+      " aqui",
+      " no",
+      " sentido",
+      " que",
+      " eles",
+      " lhe",
+      " dão",
+      "."
+    ]
+  },
+  "longest_tokens": [
+    " simplesmente",
+    " inteiramente",
+    " interessante",
+    " naturalmente",
+    " provavelmente",
+    " acontecimentos",
+    " circunstâncias",
+    " principalmente",
+    "................",
+    "................................"
+  ],
+  "val_chunks_split_in_several_tokens": 0.23475130650878925
+}
