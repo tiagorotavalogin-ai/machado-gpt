@@ -1,16 +1,18 @@
 # machado-gpt
 
-Um modelo de linguagem pequeno, treinado do zero com a obra de Machado de Assis,
+Um modelo de linguagem (language model) pequeno, treinado do zero com a obra de Machado de Assis,
 construído passo a passo para aprender como um LLM funciona por dentro.
 
-> **Estado:** etapas 1 (corpus) e 2 (bigrama) concluídas. Linha de base: 2,383
-> nats por caractere na validação. Próxima etapa: GPT por caracteres. Diários:
-> [corpus](docs/etapas/01-corpus.md), [bigrama](docs/etapas/02-bigrama.md).
+> **Estado:** etapas 1 a 4 concluídas: corpus, bigrama, GPT por caracteres e
+> tokenizador (tokenizer) BPE. Validação (validation): bigrama 2,383 e GPT 1,588
+> nats por caractere. Próxima etapa: treino e avaliação no Colab. Diários:
+> [corpus](docs/etapas/01-corpus.md), [bigrama](docs/etapas/02-bigrama.md),
+> [GPT](docs/etapas/03-gpt-caracteres.md), [BPE](docs/etapas/04-tokenizador-bpe.md).
 
 ## O que é
 
-Um Transformer decoder causal escrito em PyTorch puro, sem pesos pré-treinados e
-sem bibliotecas de treino prontas. O caminho segue a aula
+Um Transformer decoder causal escrito em PyTorch puro, sem pesos (weights) pré-treinados e
+sem bibliotecas de treino (training) prontas. O caminho segue a aula
 ["Let's build GPT: from scratch, in code, spelled out"](https://www.youtube.com/watch?v=kCc8FmEb1nY),
 de Andrej Karpathy, trocando Shakespeare por Machado.
 
@@ -20,7 +22,7 @@ perguntas e não sabe fatos: é um gerador de texto educacional. Veja os limites
 
 ## Etapas
 
-1. Corpus: coleta, limpeza, procedência e divisão por obra.
+1. Corpus: coleta, limpeza, procedência (provenance) e divisão (split) por obra.
 2. Modelo bigrama.
 3. GPT por caracteres.
 4. Tokenizador BPE próprio.

@@ -17,11 +17,11 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   `SECURITY.md` com canal privado ativo e recursos de segurança do GitHub ativados.
 - **Responsável:** proprietário.
 
-## 2026-11-19: Dados e pesos fora do Git
+## 2026-11-19: Dados e pesos (weights) fora do Git
 
 - **Decisão:** corpus, checkpoints e pesos não são versionados no Git (`.gitignore`).
   O repositório guarda o código que baixa e processa o corpus e o catálogo de fontes.
-- **Motivo:** tamanho e controle de procedência.
+- **Motivo:** tamanho e controle de procedência (provenance).
 - **Responsável:** proprietário.
 
 ## 2026-11-19: Fonte principal do corpus
@@ -57,23 +57,23 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 
 - **Decisão:** a fonte primária passa a ser a pasta `pdf/` do repositório luxedo
   (116 PDFs do portal do MEC), extraída por script próprio com PyMuPDF. Os `.txt`
-  do luxedo ficam como linha de base para medir a qualidade da nossa extração.
+  do luxedo ficam como linha de base (baseline) para medir a qualidade da nossa extração.
 - **Motivo:** o script do luxedo (`textract` + regex) colapsa quebras de linha
   duplas (perde os parágrafos), remove só as marcações das notas de rodapé (o texto
   das notas, que é editorial, pode ter ficado) e junta palavras hifenizadas na quebra
   de linha ("ave-marias" virou "avemarias").
 - **Regras da extração:**
-  1. Descartar cabeçalhos, rodapés e números de página pela posição e repetição.
+  1. Descartar cabeçalhos (headers), rodapés (footers) e números de página (page numbers) pela posição e repetição.
   2. Separar notas de rodapé (fonte menor, pé da página) num relatório; não entram
      no corpus.
-  3. Reconstruir parágrafos pelo recuo ou espaçamento entre blocos.
+  3. Reconstruir parágrafos pelo recuo (indentation) ou espaçamento entre blocos.
   4. Hífen de fim de linha decidido pelo próprio corpus: mantém se a forma com hífen
      ocorre no meio de linha; junta se a forma sem hífen ocorre; senão, vai para uma
      lista de revisão.
   5. Cabeçalho da edição ("Texto-fonte", editora, ano) sai do texto e vira metadado.
-  6. Normalizar Unicode (NFC) e ligaduras; manter o travessão de diálogo.
-  7. OCR (Tesseract, modelo `por`) só para páginas sem camada de texto.
-- **Verificação:** testes automáticos para cada regra e comparação por amostras com
+  6. Normalizar Unicode (NFC) e ligaduras (ligatures); manter o travessão de diálogo.
+  7. OCR (Tesseract, modelo `por`) só para páginas sem camada de texto (text layer).
+- **Verificação:** testes automáticos para cada regra e comparação por amostras (samples) com
   o PDF.
 - **Responsável:** proprietário.
 
@@ -136,7 +136,7 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
     *Americanas*). É preciso verificar se são do autor ou do editor.
 - **Revisão proposta:** a regra 1 (descartar linhas repetidas) apagaria texto
   verdadeiro e sai; a regra 7 (OCR) não é necessária para este corpus; a regra 5
-  passa a identificar a nota da edição pelo tamanho da fonte, e não por palavras.
+  passa a identificar a nota da edição pelo tamanho da fonte (font size), e não por palavras.
 - **Confirmação:** o proprietário confirmou a revisão das regras 1, 5 e 7.
 - **Responsável:** proprietário.
 
@@ -156,8 +156,8 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Hífen:** em *Dom Casmurro*, nenhuma das 57 linhas terminadas em hífen era palavra
   partida; os PDFs vêm de HTML, que não hifeniza. Casos sem evidência mantêm o hífen
   e ficam registrados no `.json` da extração para revisão.
-- **Parágrafo na quebra de página:** começa um novo parágrafo se a linha anterior
-  termina em pontuação **e** é curta (antes de 90% da margem direita), ou se a
+- **Parágrafo na quebra de página (page break):** começa um novo parágrafo se a linha anterior
+  termina em pontuação **e** é curta (antes de 90% da margem direita (right margin)), ou se a
   linha seguinte começa com travessão. A regra foi escolhida por medição nas
   fronteiras dentro da página (ver [docs/etapas/01-corpus.md](etapas/01-corpus.md)).
 - **Resultado:** as mesmas 66.174 palavras do `.txt` do luxedo, com 57 hífens
@@ -255,7 +255,7 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 
 - **Espaço entre palavras:** tolerância de 1,8 pt, escolhida pela distribuição das
   distâncias entre letras em todos os PDFs (letras até 1,6 pt; menor espaço real,
-  2,0 pt); o espaço não separável gravado no PDF é ignorado como o espaço comum.
+  2,0 pt); o espaço não separável (non-breaking space) gravado no PDF é ignorado como o espaço comum.
 - **Comentários do editor** entre colchetes no meio do texto saem; palavras
   restauradas pelo editor ficam, sem colchetes.
 - **Citações em verso** de outros poetas, dentro de críticas e crônicas, ficam no
@@ -269,12 +269,12 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 
 - **Grupos:** obras com 50 ou mais sequências de 8 palavras em comum ficam no mesmo
   conjunto (versões da mesma obra e poemas republicados).
-- **Duplicatas:** obra com 90% ou mais do texto contido em outra sai do corpus
+- **Duplicatas (duplicates):** obra com 90% ou mais do texto contido em outra sai do corpus
   (*Crítica Teatral* e *A Mãe*, contidas em *Revista Dramática*).
 - **Divisão:** por gênero, em ordem de SHA-256 de `machado-gpt-split-v1:grupo`;
-  validação e teste com ~10% das palavras de cada gênero (até 125% do alvo); se um
+  validação (validation) e teste com ~10% das palavras de cada gênero (até 125% do alvo); se um
   conjunto ficar vazio num gênero, recebe o primeiro grupo com até 25% do gênero.
-- **Resultado:** 110 obras; treino 1.300.828 palavras (77%), validação 213.246
+- **Resultado:** 110 obras; treino (training) 1.300.828 palavras (77%), validação 213.246
   (13%), teste 173.198 (10%); todo gênero nos três conjuntos. Sequências de 8
   palavras da validação e do teste presentes no treino: 0,014% e 0,013%.
 - **Catálogo:** `data/catalog/works.csv`, versionado; textos em `data/processed/`,
@@ -286,12 +286,55 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **PyTorch CPU e NumPy:** dependências do projeto (Apache-2.0/BSD). Localmente usa
   a versão só CPU do PyTorch (índice `pytorch-cpu` no `pyproject.toml`), porque as
   etapas 2 a 4 rodam em CPU; o Colab tem a sua própria versão com GPU.
-- **Vocabulário de caracteres só do treino,** com um símbolo de desconhecido
+- **Vocabulário (vocabulary) de caracteres só do treino,** com um símbolo de desconhecido
   (U+FFFD) para caracteres ausentes do treino (1 ocorrência na validação, `½`).
-- **Medidas:** perda em nats por caractere (principal), bits por caractere, bits
-  por byte UTF-8 (para comparar com o BPE) e perplexidade.
+- **Medidas:** perda (loss) em nats por caractere (principal), bits por caractere, bits
+  por byte UTF-8 (para comparar com o BPE) e perplexidade (perplexity).
 - **Resultados versionados** em `results/` (métricas e amostras, sem pesos);
   tabelas e pesos em `runs/`, fora do Git.
 - **Linha de base:** bigrama por contagem, 2,383 nats/caractere (3,33 bits/byte) na
   validação. Detalhes em [docs/etapas/02-bigrama.md](etapas/02-bigrama.md).
+- **Responsável:** proprietário.
+
+## 2026-11-19: Repositório criado no GitHub como privado
+
+- **Ação do proprietário:** pediu a criação do repositório no GitHub, **privado**, e
+  o envio da `main`.
+- **Verificação antes do envio:** busca de padrões sensíveis (e-mails, caminhos da
+  máquina, tokens, chaves) nos 12 commits da `main`, sem ocorrências; nenhum dado de
+  corpus ou peso no histórico; autor com e-mail `noreply` do GitHub.
+- **Continua pendente para torná-lo público:** licença do código, canal privado de
+  reporte ativo, secret scanning, push protection, Dependabot e proteção da `main`.
+- **Responsável:** proprietário.
+
+## 2026-11-19: Etapa 3, GPT por caracteres
+
+- **Modelo:** Transformer decoder com 4 blocos, 4 cabeças (heads), C = 128, contexto de 128
+  caracteres, dropout 0,1; 846.592 parâmetros (parameters). Atenção (attention) escrita explicitamente (Q, K,
+  V, máscara causal (causal mask), softmax), sem `scaled_dot_product_attention`.
+- **Treino:** loop à mão; AdamW (lr 10⁻³ com warmup de 100 passos e cosseno até
+  10⁻⁴, weight decay 0,1 só em matrizes), corte de gradiente em 1, lotes (batches) de 32
+  janelas (windows), 3.000 passos, semente (seed) 1337, 11 threads.
+- **Motivo do tamanho:** medido nesta CPU (Core Ultra 7 155H, WSL): ~0,6 s por passo
+  para este modelo; o modelo da aula do Karpathy (10,9 M) levaria ~10 h. O treino
+  maior fica para a GPU (etapa 5).
+- **Resultado:** 1,588 nats/caractere (2,22 bits/byte) na validação inteira, contra
+  2,383 do bigrama. Checkpoint em `runs/03-gpt-char/` (fora do Git), com SHA-256 em
+  `results/03-gpt-char.json`.
+- **Responsável:** proprietário.
+
+## 2026-11-20: Etapa 4, tokenizador BPE
+
+- **Tokenizador:** BPE em nível de byte (byte-level), escrito à mão, com
+  pré-tokenização (pre-tokenization) por regex (palavra com espaço à frente,
+  números de até 3 dígitos, pontuação, espaços); treinado só no treino (teste
+  automatizado).
+- **Tamanho do vocabulário (vocabulary): 4.096.** Joelho medido: 3,36 bytes por
+  símbolo (token) na validação; de 4.096 para 8.192 a compressão melhora 12%, mas as
+  junções com menos de 50 ocorrências no treino saltam de 6,5% para 35%.
+- **Verificação:** ida e volta (round-trip) exata nos três conjuntos inteiros a cada
+  execução; a primeira execução revelou a perda do `_` na pré-tokenização,
+  corrigida e coberta por teste.
+- **Artefatos:** tokenizador e conjuntos codificados em `runs/04-bpe/` (fora do
+  Git), reproduzíveis e conferíveis por SHA-256 em `results/04-bpe.json`.
 - **Responsável:** proprietário.
