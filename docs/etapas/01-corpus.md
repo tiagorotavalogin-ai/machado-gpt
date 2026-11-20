@@ -5,11 +5,11 @@ feito e o que se observou. As decisões formais estão em
 [DECISOES.md](../DECISOES.md).
 
 **Objetivo da etapa:** transformar os PDFs da obra de Machado de Assis num corpus
-de texto limpo, catalogado e dividido por obra, que servirá de dado de treino nas
+de texto limpo, catalogado e dividido por obra, que servirá de dado de treino (training) nas
 próximas etapas.
 
 Por que isso importa para um LLM: o modelo aprende **só** a partir do texto que
-recebe. Se o corpus tiver números de página, notas de editores modernos ou palavras
+recebe. Se o corpus tiver números de página (page numbers), notas de editores modernos ou palavras
 grudadas por erro de extração, o modelo vai aprender a imitar esses defeitos. A
 qualidade do dado define o teto do que o modelo pode aprender.
 
@@ -78,7 +78,7 @@ resolvido, saia de `data/raw/luxedo/`. Os arquivos baixados nunca são executado
 
 - **Idempotente:** rodar de novo não baixa o que já está correto. Antes de baixar,
   o script confere o hash do arquivo local.
-- **Escrita atômica:** grava primeiro em `arquivo.pdf.part` e só renomeia depois de
+- **Escrita atômica (atomic write):** grava primeiro em `arquivo.pdf.part` e só renomeia depois de
   completo. Se o processo cair no meio, não fica um PDF pela metade com o nome final.
 
 ### O que foi feito
@@ -100,7 +100,7 @@ uv run python -m machado_gpt.corpus.download
 manifest: data/catalog/luxedo_manifest.csv (31.0 MB verified)
 ```
 
-- 116 PDFs (19 MB, a fonte) e 116 TXTs (12 MB, linha de base para comparar a nossa
+- 116 PDFs (19 MB, a fonte) e 116 TXTs (12 MB, linha de base (baseline) para comparar a nossa
   extração com a do luxedo), em `data/raw/luxedo/`, fora do Git.
 - O catálogo `data/catalog/luxedo_manifest.csv` entra no Git: tem caminho, tamanho,
   hash do Git, SHA-256, repositório e commit de cada arquivo, mas nenhum texto.
@@ -156,7 +156,7 @@ O que dá para ler aí:
 - **Nota da edição** em fonte 7,4; o texto de Machado está em 9,9. O tamanho da
   fonte separa o que é editorial do que é obra.
 - **Títulos de capítulo** em negrito, centralizados (`x0` maior).
-- **Parágrafos sem recuo:** todas as linhas começam em `x0=98,6`. O que marca um
+- **Parágrafos sem recuo (indentation):** todas as linhas começam em `x0=98,6`. O que marca um
   novo parágrafo é o **espaço vertical**: 12 pt entre linhas do mesmo parágrafo
   (322 − 310) e 24 pt entre parágrafos (406 − 382).
 
@@ -172,7 +172,7 @@ arquivos os sinais de que as regras dependem. Assim, cada regra se apoia em dado
 e não em suposições.
 
 Código: [`src/machado_gpt/corpus/inspect_pdfs.py`](../../src/machado_gpt/corpus/inspect_pdfs.py).
-Para cada PDF, ele mede páginas sem texto, tamanho da fonte do corpo, porcentagem de
+Para cada PDF, ele mede páginas sem texto, tamanho da fonte (font size) do corpo, porcentagem de
 texto em fonte menor, linhas repetidas entre páginas, espaçamentos entre linhas e
 linhas terminadas em hífen. O relatório vai para `data/interim/pdf_survey.csv`, fora
 do Git.
@@ -199,7 +199,7 @@ As traduções foram baixadas, mas ficam fora do corpus principal (ver decisões
 
 ### O que aprendemos
 
-**1. Não é preciso OCR.** Há 30 páginas sem camada de texto, mas todas são a última
+**1. Não é preciso OCR.** Há 30 páginas sem camada de texto (text layer), mas todas são a última
 página em branco de um PDF (só um traço desenhado). OCR (reconhecimento óptico de
 caracteres) só seria necessário em páginas digitalizadas como imagem, e não há
 nenhuma.
@@ -254,7 +254,7 @@ edição. O índice é estrutura, não texto literário, e deve sair.
 
 Depois de ler as linhas, a extração toma uma decisão para cada par de linhas
 vizinhas: continuam a mesma frase, abrem um novo parágrafo, são um título, ou uma
-palavra foi partida por hífen? O código tem duas camadas:
+palavra foi partida por hífen? O código tem duas camadas (layers):
 
 1. **Leitura** (`read_lines`): o pdfplumber transforma o PDF em objetos `Line`, com
    texto, página, posição (`top`, `x0`, `x1`), tamanho da fonte e se a linha está
@@ -281,9 +281,9 @@ notas separadas e o registro de cada decisão de hífen.
 | Notas saem do corpus | qualquer outra linha em fonte menor que o corpo |
 | Título fica isolado | linha inteira em negrito |
 | Novo parágrafo na mesma página | espaço vertical maior que 1,5 × o espaçamento de linha |
-| Novo parágrafo na quebra de página | ver abaixo |
+| Novo parágrafo na quebra de página (page break) | ver abaixo |
 | Hífen no fim da linha | o próprio texto decide (ver abaixo) |
-| Unicode | NFC, ligaduras desfeitas, travessão mantido |
+| Unicode | NFC, ligaduras (ligatures) desfeitas, travessão mantido |
 
 ### Um bug que o teste pegou
 
@@ -321,7 +321,7 @@ Para saber se a regra é boa, medimos onde a resposta é conhecida: nas fronteir
 | com pontuação final, linha cheia, próxima começa com travessão | 62 | 100% |
 | com pontuação final, linha cheia, sem travessão | 290 | 20% |
 
-"Linha curta" é a que termina antes de 90% da margem direita. A regra da quebra de
+"Linha curta" é a que termina antes de 90% da margem direita (right margin). A regra da quebra de
 página ficou: **novo parágrafo se a linha termina em pontuação e é curta, ou se a
 próxima começa com travessão**. Pela tabela, o erro esperado fica restrito ao último
 caso (cerca de 1 em 5 dessas quebras); antes, era de cerca de 1 em 6 de **todas** as
@@ -431,7 +431,7 @@ No PDF, "Nada se mudaria; o regime..." está numa linha só. O luxedo cortou ess
 em duas e jogou a segunda metade para depois do parágrafo. Isso acontece quando o PDF
 guarda uma linha em dois pedaços de texto e o extrator os lê na ordem em que estão
 gravados no arquivo. O pdfplumber agrupa os caracteres pela **posição na página**,
-que é a ordem de leitura de quem olha a página.
+que é a ordem de leitura (reading order) de quem olha a página.
 
 ### Sanidade dos parágrafos
 
@@ -604,7 +604,7 @@ que é tradução. Para esses casos, usamos uma **lista manual**, com três exig
 
 ### A melhor fonte estava no próprio material
 
-As notas de rodapé dos livros de poesia, que já tínhamos separado do corpus, são do
+As notas de rodapé (footnotes) dos livros de poesia, que já tínhamos separado do corpus, são do
 **próprio Machado**, das edições originais. Ele declara as traduções com todas as
 letras:
 
@@ -870,7 +870,7 @@ ele nunca viu: **validação** (usada durante o desenvolvimento, para escolher
 hiperparâmetros e comparar versões) e **teste** (guardado para a medição final).
 Se um parágrafo de *Dom Casmurro* estiver no treino e o seguinte na validação, o
 modelo já viu os personagens, as frases e o assunto, e a validação passa a medir
-memória, não generalização. Por isso a divisão é feita **por obra inteira**.
+memória, não generalização. Por isso a divisão (split) é feita **por obra inteira**.
 
 E não basta separar arquivos: a mesma obra pode estar em dois arquivos.
 
@@ -892,7 +892,7 @@ Duas consequências:
 
 - **Grupos:** obras com 50 ou mais sequências em comum formam um grupo, e o grupo
   inteiro vai para o mesmo conjunto (o agrupamento é transitivo).
-- **Duplicatas:** uma obra com 90% ou mais do texto dentro de outra sai do corpus
+- **Duplicatas (duplicates):** uma obra com 90% ou mais do texto dentro de outra sai do corpus
   (*Crítica Teatral* e *A Mãe*), porque o texto repetido pesaria em dobro no treino.
   Fica a obra maior; nenhuma palavra se perde.
 
@@ -901,7 +901,7 @@ Duas consequências:
 A ordem das obras para o sorteio é dada pelo **SHA-256** de `semente:nome do grupo`.
 Um hash espalha os nomes de modo que parece aleatório, mas é sempre igual: qualquer
 pessoa, em qualquer máquina, obtém a mesma divisão, que não depende da ordem dos
-arquivos nem de um gerador de números aleatórios. Trocar a semente gera outra
+arquivos nem de um gerador de números aleatórios. Trocar a semente (seed) gera outra
 divisão, igualmente reproduzível.
 
 ### A regra de divisão
@@ -961,7 +961,7 @@ diferentes, e não texto repetido de uma obra.
 |---|---|
 | Catálogo com fonte, edição, licença e hash de cada texto | `data/catalog/works.csv` |
 | Textos limpos, sem notas ou prefácios de editores modernos | seções 6 a 11 |
-| Divisão por obra reproduzível (hash determinístico) | seção 12, com teste de vazamento |
+| Divisão por obra reproduzível (hash determinístico) | seção 12, com teste de vazamento (leakage) |
 | Estatísticas do corpus | seção 12 |
 
 **Limites conhecidos, registrados:** citações em verso de outros poetas dentro de
