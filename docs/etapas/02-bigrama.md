@@ -4,8 +4,8 @@ Diário técnico da etapa 2. Cada seção explica o conceito, depois o que foi f
 resultado medido e a lição. As decisões formais estão em
 [DECISOES.md](../DECISOES.md).
 
-**Objetivo da etapa:** construir o modelo de linguagem mais simples possível, medir
-sua perda na validação e usá-la como **linha de base**: todo modelo seguinte só
+**Objetivo da etapa:** construir o modelo de linguagem (language model) mais simples possível, medir
+sua perda (loss) na validação (validation) e usá-la como **linha de base** (baseline): todo modelo seguinte só
 vale a pena se ficar abaixo dela.
 
 ---
@@ -24,8 +24,8 @@ a probabilidade de vir "u"? E de vir "a"?
 
 ## 2. Vocabulário: só do treino
 
-Cada caractere distinto do **treino** recebe um número (id). A regra do projeto é
-que nada da validação ou do teste influencie o modelo, nem pelo vocabulário. Por
+Cada caractere distinto do **treino** (training) recebe um número (id). A regra do projeto é
+que nada da validação ou do teste influencie o modelo, nem pelo vocabulário (vocabulary). Por
 isso, um caractere que nunca aparece no treino vira um símbolo único de
 "desconhecido" (`�`, U+FFFD).
 
@@ -51,8 +51,8 @@ as posições da validação. Se o modelo dá probabilidade 1 ao caractere certo
 |---|---|
 | **nats por caractere** | perda com logaritmo natural; é o que o PyTorch calcula |
 | **bits por caractere** | a mesma perda com log₂: quantos bits, em média, um compressor ideal gastaria por caractere usando o modelo |
-| **bits por byte** | total de bits dividido pelo número de bytes UTF-8 ("ç" ocupa 2 bytes); é a medida que permite comparar com o tokenizador BPE da etapa 4, cujos símbolos não são caracteres |
-| **perplexidade** | exp(perda): "entre quantos caracteres o modelo hesita, em média" |
+| **bits por byte** | total de bits dividido pelo número de bytes UTF-8 ("ç" ocupa 2 bytes); é a medida que permite comparar com o tokenizador (tokenizer) BPE da etapa 4, cujos símbolos não são caracteres |
+| **perplexidade** (perplexity) | exp(perda): "entre quantos caracteres o modelo hesita, em média" |
 
 Para saber se o modelo aprendeu algo, duas linhas de base:
 
@@ -72,7 +72,7 @@ dividimos pelo total de vezes que `a` apareceu. O modelo inteiro é uma tabela d
 
 Um problema: um par que nunca aparece no treino tem probabilidade 0, e −log 0 é
 infinito. Se ele aparecer na validação, a perda explode. A correção é a
-**suavização**: somar α a todas as contagens antes de dividir, e escolher α na
+**suavização** (smoothing): somar α a todas as contagens antes de dividir, e escolher α na
 validação.
 
 Código: [`src/machado_gpt/bigram.py`](../../src/machado_gpt/bigram.py).
@@ -96,7 +96,7 @@ uv run python -m machado_gpt.bigram
 - **Treino 2,373, validação 2,383:** quase iguais. Com 7,4 milhões de caracteres, uma
   tabela de 20 mil números não tem como decorar o texto. Não há *overfitting*.
 
-Amostra (começando em "Capitu", semente 1337):
+Amostra (começando em "Capitu", semente (seed) 1337):
 
 > Capituempo Gomené ssodintiramivim, quao ncitomintre impartumatititos fo J. O
 > qumamorgoraçõe dera, hor de arado
@@ -116,13 +116,13 @@ Em vez de contar, guardamos uma matriz **W** de 144 × 144 números livres
 1. pegamos a linha `W[a]` (o mesmo que multiplicar o vetor *one-hot* de `a` por W);
 2. aplicamos o **softmax**, exp(W[a]) dividido pela soma, e temos uma distribuição
    de probabilidade;
-3. a perda é −log P(caractere real): a **entropia cruzada**;
+3. a perda é −log P(caractere real): a **entropia cruzada** (cross-entropy);
 4. o **gradiente** da perda diz como mexer cada número de W para a perda cair;
    damos um passo pequeno nessa direção: `W -= lr * W.grad`.
 
-O passo de atualização é escrito à mão, sem a classe pronta de otimizador, para
-deixar o mecanismo visível. Cada passo usa um **lote** de 32.768 posições sorteadas
-do treino (descida de gradiente estocástica).
+O passo de atualização é escrito à mão, sem a classe pronta de otimizador (optimizer), para
+deixar o mecanismo visível. Cada passo usa um **lote** (batch) de 32.768 posições sorteadas
+do treino (descida de gradiente estocástica, em inglês *stochastic gradient descent*).
 
 Este modelo tem exatamente a mesma capacidade da tabela de contagem: o melhor W
 possível é o logaritmo das probabilidades contadas. **Se o treino funcionar, ele
@@ -153,7 +153,7 @@ mesmo loop recupera a tabela de contagem quando treinado o suficiente.
 
 A amostra neural tem um lixo que a da contagem não tem: "lan+“2.", "pó86W=Jj".
 Hipótese: as linhas de W dos **caracteres raros** quase não recebem gradiente,
-porque aparecem pouco nos lotes, e ficam perto do ponto de partida (uniforme).
+porque aparecem pouco nos lotes (batches), e ficam perto do ponto de partida (uniforme).
 Medimos, por faixa de frequência do caractere atual:
 
 | Caractere atual | Linhas | Entropia aprendida (uniforme = 4,97) | Distância à contagem (KL) | Parte da diferença de perda |
@@ -184,7 +184,7 @@ olhar as duas.
 | bigrama neural (3.000 passos) | 2,394 | 3,35 |
 
 O GPT por caracteres da etapa 3 precisa ficar **abaixo de 2,383 nats/caractere** na
-mesma validação. Os números completos, com as amostras, estão em
+mesma validação. Os números completos, com as amostras (samples), estão em
 [`results/02-bigram.json`](../../results/02-bigram.json) (versionado). As tabelas
 treinadas ficam em `runs/02-bigram/`, fora do Git.
 
@@ -211,5 +211,5 @@ Pré-requisito: o corpus da etapa 1 em `data/processed/` (ver
 
 **Etapa 3: GPT por caracteres.** O bigrama esquece tudo além do último caractere. O
 próximo modelo olha um **contexto** de muitos caracteres, e o mecanismo que permite
-isso é a **atenção**: cada posição decide quais posições anteriores importam para
+isso é a **atenção** (attention): cada posição decide quais posições anteriores importam para
 prever a próxima.
