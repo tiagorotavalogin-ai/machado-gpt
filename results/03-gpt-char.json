@@ -1,0 +1,116 @@
+{
+  "model": {
+    "vocab_size": 144,
+    "block_size": 128,
+    "n_layer": 4,
+    "n_head": 4,
+    "n_embd": 128,
+    "dropout": 0.1
+  },
+  "parameters": 846592,
+  "train": {
+    "steps": 3000,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "min_learning_rate": 0.0001,
+    "warmup_steps": 100,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "eval_every": 250,
+    "eval_batches": 20,
+    "seed": 1337,
+    "threads": 11
+  },
+  "history": [
+    {
+      "step": 0,
+      "train": 5.0155651569366455,
+      "val": 5.01574125289917,
+      "minutes": 0.061359620094299315
+    },
+    {
+      "step": 250,
+      "train": 2.3534391283988954,
+      "val": 2.3662955164909363,
+      "minutes": 1.9022573669751486
+    },
+    {
+      "step": 500,
+      "train": 2.122905457019806,
+      "val": 2.1410871267318727,
+      "minutes": 3.5581226070721943
+    },
+    {
+      "step": 750,
+      "train": 1.9721723318099975,
+      "val": 1.9867300033569335,
+      "minutes": 5.145846895376841
+    },
+    {
+      "step": 1000,
+      "train": 1.862552773952484,
+      "val": 1.871066641807556,
+      "minutes": 7.111142309506734
+    },
+    {
+      "step": 1250,
+      "train": 1.7539626598358153,
+      "val": 1.782046365737915,
+      "minutes": 9.652041904131572
+    },
+    {
+      "step": 1500,
+      "train": 1.7015744388103484,
+      "val": 1.739510452747345,
+      "minutes": 12.543376183509826
+    },
+    {
+      "step": 1750,
+      "train": 1.6709415853023528,
+      "val": 1.6842615187168122,
+      "minutes": 14.50516985654831
+    },
+    {
+      "step": 2000,
+      "train": 1.6216608941555024,
+      "val": 1.6426399230957032,
+      "minutes": 16.759684904416403
+    },
+    {
+      "step": 2250,
+      "train": 1.5920887053012849,
+      "val": 1.614113974571228,
+      "minutes": 18.942676015694936
+    },
+    {
+      "step": 2500,
+      "train": 1.5725536525249482,
+      "val": 1.6004178524017334,
+      "minutes": 20.883764231204985
+    },
+    {
+      "step": 2750,
+      "train": 1.5509311378002166,
+      "val": 1.605605238676071,
+      "minutes": 22.970443693796792
+    },
+    {
+      "step": 3000,
+      "train": 1.5546565413475038,
+      "val": 1.5785323560237885,
+      "minutes": 25.038295276959737
+    }
+  ],
+  "val_full": {
+    "nats_per_char": 1.5878045244762913,
+    "bits_per_char": 2.290717713363004,
+    "bits_per_byte": 2.2206224692446326,
+    "perplexity": 4.892994677247303
+  },
+  "val_characters": 1245312,
+  "checkpoint_sha256": "f161525913e754641645d209b4dce5a0f4e99778da8d817f3b12f1869d59ae93",
+  "samples": {
+    "Capitu": "Capitu.\n\n— Moço!\n\nD. Ginária?\n\n— A quando chamanha ainda?\n\n— Podia o fora. O que é prorfim; e que hor de supera de salveu de hora?\n\n— Vos essas como tudo, esta colegião.\n\n— Novão que,\n— “Mas posto autor, depois, à poese convençada força de Sendo, e saiu: lá sem contação; acaso esperadas próprias que me tu me alta livro, num hofeitar, o Gináfico, não dá mais amor à moça que e clara pôde amigo. Ainda (que todas não impostas se achei se dele escolência; o hás nosso dão já tal sentimo e as conseconstrêvei",
+    "Não consultes dicionários.": "Não consultes dicionários..\n\nReio; — não diflerá muito? Estante filho, ainda tudo muito cropo. O que é profício de tempo. O Raugue lhe senhou de Eusar., gostava reflor. Dupinamente o sentimório. Não há palavras passagaus E revoluções por ele. Nem gabinha abstante um posso dalguma viente a mesma fez de si saber o ajustro matério de Gil aquela e difiquerrar a concelação se o assim, tem franfesso e longe na arte do que estevedoo aos sólimos, purada o recreio de incorrer aos palsos quando diziam recontemplar; como como elega"
+  }
+}
