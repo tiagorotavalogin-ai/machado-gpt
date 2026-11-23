@@ -31,6 +31,7 @@ class GPTConfig:
     n_head: int = 4  # attention heads per block
     n_embd: int = 128  # C: width of every vector
     dropout: float = 0.1
+    tie_weights: bool = False  # output layer reuses the token embedding matrix (stage 5)
 
 
 class CausalSelfAttention(nn.Module):
@@ -68,7 +69,8 @@ class CausalSelfAttention(nn.Module):
         # softmax does not saturate into a one-hot at initialization.
         scores = scores.masked_fill(self.mask[:, :, :T, :T] == 0, float("-inf"))
         weights = F.softmax(scores, dim=-1)  # each row sums to 1; future positions get 0
-        self.last_weights = weights.detach()
+        if not self.training:  # kept for inspection; skipped in training to save GPU memory
+            self.last_weights = weights.detach()
         out = self.attn_dropout(weights) @ v  # (B, nh, T, head_size)
         out = out.transpose(1, 2).contiguous().view(B, T, C)  # concatenate the heads
         return self.resid_dropout(self.proj(out))
@@ -122,6 +124,11 @@ class GPT(nn.Module):
         self.ln_f = nn.LayerNorm(config.n_embd)
         self.head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         self.apply(self._init_weights)
+        if config.tie_weights:
+            # Weight tying: the vector that represents token i on the way in is the
+            # same that scores token i on the way out. Saves V x C parameters and,
+            # with little data, helps rare tokens: both uses train the same vector.
+            self.head.weight = self.token_emb.weight
 
     @staticmethod
     def _init_weights(module: nn.Module) -> None:
@@ -135,7 +142,7 @@ class GPT(nn.Module):
             nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
     def num_params(self) -> int:
-        return sum(p.numel() for p in self.parameters())
+        return sum(p.numel() for p in self.parameters())  # a tied matrix is counted once
 
     def forward(
         self, ids: torch.Tensor, targets: torch.Tensor | None = None
