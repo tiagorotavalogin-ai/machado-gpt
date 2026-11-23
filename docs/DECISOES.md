@@ -373,3 +373,26 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Notebook:** `notebooks/05-colab.ipynb`, versionado **sem saídas (outputs)**; toda a
   lógica fica no pacote, com testes.
 - **Responsável:** proprietário.
+
+## 2026-11-23: Token de leitura para o Colab
+
+- **Ação do proprietário:** criou um token *fine-grained* do GitHub
+  (`colab-machado-gpt`), só leitura de conteúdo, só deste repositório, validade de 7
+  dias, para o Colab clonar o repositório privado. Guardado apenas nos Segredos do Colab.
+- **Revogado** pelo proprietário em 2026-11-23, ao fim da etapa 5.
+- **Responsável:** proprietário.
+
+## 2026-11-23: Etapa 5, resultado e modelo grande descartado
+
+- **Reprodutibilidade:** no Colab, o corpus, o tokenizador e os três conjuntos saíram
+  idênticos, byte a byte, aos locais (catálogo sem diferenças, SHA-256 iguais).
+- **Resultado na validação (validation):** pequeno 1,696 e médio 1,663 bits por byte,
+  contra 2,22 do GPT por caracteres; teste 1,670 e 1,632. Os dois rodaram os 5.000 passos
+  (36 voltas (epochs)) na T4, em 8 e 19 minutos.
+- **Modelo grande não treinado:** o médio já mostra sobreajuste (overfitting): distância
+  de 0,85 nats entre validação e treino, validação no platô (0,01 nos últimos 1.000
+  passos), e só 2% melhor que o pequeno com o triplo de parâmetros (parameters). O
+  limite é a quantidade de dados.
+- **Checkpoints:** no Drive do proprietário; SHA-256 em `results/05-gpt-bpe-*.json` e no
+  diário da etapa.
+- **Responsável:** proprietário.

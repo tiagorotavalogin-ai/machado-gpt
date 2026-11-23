@@ -1,0 +1,367 @@
+{
+  "size": "medium",
+  "model": {
+    "vocab_size": 4096,
+    "block_size": 256,
+    "n_layer": 6,
+    "n_head": 6,
+    "n_embd": 384,
+    "dropout": 0.2,
+    "tie_weights": true
+  },
+  "parameters": 12318720,
+  "train": {
+    "steps": 5000,
+    "batch_size": 64,
+    "learning_rate": 0.0006,
+    "min_learning_rate": 5.9999999999999995e-05,
+    "warmup_steps": 200,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "eval_every": 100,
+    "train_eval_batches": 24,
+    "patience": 10,
+    "save_last_every": 500,
+    "seed": 1337
+  },
+  "git_commit": "bc8a709ca9fcfcfc799ae607af91c5f3c7beab12",
+  "device": "Tesla T4",
+  "torch": "2.14.1+cu130",
+  "data_sha256": {
+    "tokenizer": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+    "train": "04c378aea5752aa6ab8c9a4798a0d0e05a76710268bd19ce80b3974839b008a9",
+    "val": "455b44c99579616d433517d111f9e619c0e405123e59b6ef9b94abc8bf22768c",
+    "test": "157fe18bf406e22831d27c2586aaa5003df3ad09b965ef0dcb0b9fc797fd043b"
+  },
+  "stopped": "max steps",
+  "minutes": 18.820149425665537,
+  "best_step": 5000,
+  "history": [
+    {
+      "step": 0,
+      "train": 8.37999975681305,
+      "val": 8.379987855925307,
+      "minutes": 0.052239243189493814
+    },
+    {
+      "step": 100,
+      "train": 6.201682527860005,
+      "val": 6.256465607813677,
+      "minutes": 0.4166120926539103
+    },
+    {
+      "step": 200,
+      "train": 5.331194758415222,
+      "val": 5.4314558842959855,
+      "minutes": 0.8069575270016988
+    },
+    {
+      "step": 300,
+      "train": 4.919299562772115,
+      "val": 5.0491280731385135,
+      "minutes": 1.1853204329808553
+    },
+    {
+      "step": 400,
+      "train": 4.688992261886597,
+      "val": 4.838913883687024,
+      "minutes": 1.550884477297465
+    },
+    {
+      "step": 500,
+      "train": 4.541805446147919,
+      "val": 4.708043429968106,
+      "minutes": 1.923196025689443
+    },
+    {
+      "step": 600,
+      "train": 4.392416616280873,
+      "val": 4.579640009701851,
+      "minutes": 2.3110819260279336
+    },
+    {
+      "step": 700,
+      "train": 4.247998197873433,
+      "val": 4.477368732306754,
+      "minutes": 2.6855533798535665
+    },
+    {
+      "step": 800,
+      "train": 4.171197613080342,
+      "val": 4.404504938246975,
+      "minutes": 3.0560137828191123
+    },
+    {
+      "step": 900,
+      "train": 4.08655168612798,
+      "val": 4.327660337679353,
+      "minutes": 3.4298073093096417
+    },
+    {
+      "step": 1000,
+      "train": 4.005164355039597,
+      "val": 4.271884128700864,
+      "minutes": 3.8058218359947205
+    },
+    {
+      "step": 1100,
+      "train": 3.917127122481664,
+      "val": 4.218247410441435,
+      "minutes": 4.1875378886858625
+    },
+    {
+      "step": 1200,
+      "train": 3.8615157504876456,
+      "val": 4.178032028699033,
+      "minutes": 4.560688547293345
+    },
+    {
+      "step": 1300,
+      "train": 3.7932384312152863,
+      "val": 4.144650203145277,
+      "minutes": 4.933109434445699
+    },
+    {
+      "step": 1400,
+      "train": 3.733766257762909,
+      "val": 4.107757997608632,
+      "minutes": 5.3048795859018965
+    },
+    {
+      "step": 1500,
+      "train": 3.7025209764639535,
+      "val": 4.083088409158102,
+      "minutes": 5.677654695510864
+    },
+    {
+      "step": 1600,
+      "train": 3.6574982007344565,
+      "val": 4.061633115795261,
+      "minutes": 6.058106676737467
+    },
+    {
+      "step": 1700,
+      "train": 3.6140380104382834,
+      "val": 4.039768655908563,
+      "minutes": 6.432258709271749
+    },
+    {
+      "step": 1800,
+      "train": 3.582867443561554,
+      "val": 4.020279283261666,
+      "minutes": 6.80637180407842
+    },
+    {
+      "step": 1900,
+      "train": 3.546531528234482,
+      "val": 4.0074776855795795,
+      "minutes": 7.181303306420644
+    },
+    {
+      "step": 2000,
+      "train": 3.5111893812815347,
+      "val": 3.9892025722087188,
+      "minutes": 7.5563486059506735
+    },
+    {
+      "step": 2100,
+      "train": 3.471916764974594,
+      "val": 3.9850124862476712,
+      "minutes": 7.938139792283376
+    },
+    {
+      "step": 2200,
+      "train": 3.4467639327049255,
+      "val": 3.9708753050531387,
+      "minutes": 8.312012537320454
+    },
+    {
+      "step": 2300,
+      "train": 3.433729370435079,
+      "val": 3.9571081571585367,
+      "minutes": 8.685299611091613
+    },
+    {
+      "step": 2400,
+      "train": 3.4007528722286224,
+      "val": 3.950944756152082,
+      "minutes": 9.057834029197693
+    },
+    {
+      "step": 2500,
+      "train": 3.361723522345225,
+      "val": 3.944092256784918,
+      "minutes": 9.432074944178263
+    },
+    {
+      "step": 2600,
+      "train": 3.340212126572927,
+      "val": 3.938395081792833,
+      "minutes": 9.814866197109222
+    },
+    {
+      "step": 2700,
+      "train": 3.326206495364507,
+      "val": 3.9293301602138104,
+      "minutes": 10.190986025333405
+    },
+    {
+      "step": 2800,
+      "train": 3.296974778175354,
+      "val": 3.9215229593980894,
+      "minutes": 10.566021120548248
+    },
+    {
+      "step": 2900,
+      "train": 3.2759408354759216,
+      "val": 3.9147593657282163,
+      "minutes": 10.940450545152029
+    },
+    {
+      "step": 3000,
+      "train": 3.2583036720752716,
+      "val": 3.9104906913823756,
+      "minutes": 11.315296371777853
+    },
+    {
+      "step": 3100,
+      "train": 3.227989584207535,
+      "val": 3.9016963092576553,
+      "minutes": 11.696740206082662
+    },
+    {
+      "step": 3200,
+      "train": 3.2131257951259613,
+      "val": 3.906326661873247,
+      "minutes": 12.070813298225403
+    },
+    {
+      "step": 3300,
+      "train": 3.203397403160731,
+      "val": 3.9007868118439437,
+      "minutes": 12.44255291223526
+    },
+    {
+      "step": 3400,
+      "train": 3.1645313103993735,
+      "val": 3.8965670668032852,
+      "minutes": 12.816294952233632
+    },
+    {
+      "step": 3500,
+      "train": 3.165296326080958,
+      "val": 3.890916593108334,
+      "minutes": 13.190442033608754
+    },
+    {
+      "step": 3600,
+      "train": 3.1487307945887246,
+      "val": 3.8899748508992484,
+      "minutes": 13.572358806928
+    },
+    {
+      "step": 3700,
+      "train": 3.1483216683069863,
+      "val": 3.8918554889860366,
+      "minutes": 13.945342751344045
+    },
+    {
+      "step": 3800,
+      "train": 3.1385715901851654,
+      "val": 3.886345354247556,
+      "minutes": 14.317131173610687
+    },
+    {
+      "step": 3900,
+      "train": 3.119503607352575,
+      "val": 3.882241864213988,
+      "minutes": 14.69089942375819
+    },
+    {
+      "step": 4000,
+      "train": 3.0966289142767587,
+      "val": 3.882087830162176,
+      "minutes": 15.065417814254761
+    },
+    {
+      "step": 4100,
+      "train": 3.0903019507726035,
+      "val": 3.881866005388427,
+      "minutes": 15.446489298343659
+    },
+    {
+      "step": 4200,
+      "train": 3.0911827981472015,
+      "val": 3.878814135153503,
+      "minutes": 15.820499241352081
+    },
+    {
+      "step": 4300,
+      "train": 3.070363978544871,
+      "val": 3.8780301164957955,
+      "minutes": 16.194470544656117
+    },
+    {
+      "step": 4400,
+      "train": 3.0620770951112113,
+      "val": 3.8763275350888784,
+      "minutes": 16.56855240662893
+    },
+    {
+      "step": 4500,
+      "train": 3.0609259804089866,
+      "val": 3.876868859282773,
+      "minutes": 16.943282091617583
+    },
+    {
+      "step": 4600,
+      "train": 3.044364720582962,
+      "val": 3.8754152628853267,
+      "minutes": 17.322854010264077
+    },
+    {
+      "step": 4700,
+      "train": 3.0353668133417764,
+      "val": 3.8728413157070234,
+      "minutes": 17.6970418771108
+    },
+    {
+      "step": 4800,
+      "train": 3.044508914152781,
+      "val": 3.8725759527943553,
+      "minutes": 18.071257468064626
+    },
+    {
+      "step": 4900,
+      "train": 3.0351631740729013,
+      "val": 3.874056591894989,
+      "minutes": 18.44570812781652
+    },
+    {
+      "step": 5000,
+      "train": 3.023142099380493,
+      "val": 3.8720029816879813,
+      "minutes": 18.818032173315682
+    }
+  ],
+  "val": {
+    "nats_per_token": 3.8720029816879813,
+    "bits_per_byte": 1.6628345139141616,
+    "perplexity_per_token": 48.03851003734268,
+    "tokens": 382208,
+    "bytes": 1283988
+  },
+  "test": {
+    "nats_per_token": 3.804876086905088,
+    "bits_per_byte": 1.6323425105246792,
+    "perplexity_per_token": 44.91968363111936,
+    "tokens": 306432,
+    "bytes": 1030476
+  },
+  "checkpoint": "best.pt",
+  "checkpoint_sha256": "7c882e88c44be69ec7881c1252f733193d7de47b470d1ff5feaf42d8ad93d54d",
+  "samples": {
+    "Capitu": "Capitu piedosa, em que, se esta palavra sacudia a pica, inclinava-se a pontilha, mas não deixou nada. A voz parecia tão nos elegantes; sentia-lhe simplicidade, que parecia apagar-se a cabeça, para observar a tristeza, esta divórdia com a imprudência. Era impossível que, como todas as conveniências da flor e a invalidez passageira da gola solitária, e principalmente as horas de estréia. A madrasta seguiu-se ainda diante de si. A voz vaga que Luís Garcia suspendeu, entretanto, não tonto, agitação, perturbou o olho, não pôde, e desviou o pés mais que outras forças de amor, e muito sincera e afetação. Fez um pouco de supressão; aborrecera a confusão crescia-lhe a porta. Iaiá vinha a impaciência que naquela",
+    "Não consultes dicionários.": "Não consultes dicionários. Entretanto, É natural que, por um simples estabelecimento político, são esquecer que o espírito do homem tem podido dissipar para mal a sociedade, e a moralidade elevadada no Cid, ou pelo menos pelo resultado. Citicamente, é matéria dos espíritos que apontaram; uma forma regalanimada no sentido, mas não importa. A ansiedade geral confessa o contrário, como passa a todo reforma. O autor, as imposições literárias de ambos os não caio em mim, mas o método é pestesaro, e não é possível que um homem romano não toca, é uma sagacidade literária que ela foi possibir. Erasmo, aconselha-as, escreve, e conclui que é bom distinguir um tribunal de remédio pagar a aborrecimento de um príncipe, que é o sacerdônento do chim"
+  }
+}
