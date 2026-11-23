@@ -1,0 +1,540 @@
+<title>Machado-GPT por dentro</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spectral:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: sticky stage rail on the left (top strip on phones), one reading column of ~70ch; each stage = concept, live demo with real data, measured result. */
+:root {
+  --paper: #f3f5f2;
+  --surface: #ffffff;
+  --ink: #1c2422;
+  --muted: #5b6764;
+  --line: #d5dbd7;
+  --accent: #0e6a6c;
+  --accent-soft: #d7ebe9;
+  --train: #0e6a6c;
+  --val: #b26a12;
+  --test: #7a4a8c;
+  --warn: #a8432f;
+  --serif: "Spectral", Georgia, "Times New Roman", serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121716; --surface: #1a2120; --ink: #e3e9e6; --muted: #9aa8a4; --line: #2f3a38;
+    --accent: #5cc2bd; --accent-soft: #1d3a39; --train: #5cc2bd; --val: #e0a052; --test: #c193d4; --warn: #e88a74;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121716; --surface: #1a2120; --ink: #e3e9e6; --muted: #9aa8a4; --line: #2f3a38;
+  --accent: #5cc2bd; --accent-soft: #1d3a39; --train: #5cc2bd; --val: #e0a052; --test: #c193d4; --warn: #e88a74;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); }
+.wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 80px; }
+nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; display: flex; flex-direction: column; gap: 4px; }
+nav.rail .brand { font: 600 1.05rem/1.2 var(--serif); margin-bottom: 12px; }
+nav.rail a { display: grid; grid-template-columns: 1.6em 1fr auto; gap: 6px; align-items: baseline; padding: 6px 8px; border-radius: 6px;
+  color: var(--muted); text-decoration: none; font-size: .9rem; }
+nav.rail a:hover, nav.rail a:focus-visible { background: var(--accent-soft); color: var(--ink); outline: none; }
+nav.rail a.on { color: var(--ink); background: var(--accent-soft); }
+nav.rail .n { font: 500 .8rem var(--mono); color: var(--accent); }
+nav.rail .v { font: .75rem var(--mono); font-variant-numeric: tabular-nums; }
+main { min-width: 0; max-width: 46rem; }
+h1 { font: 700 clamp(2.2rem, 5vw, 3.4rem)/1.05 var(--serif); margin: 0 0 12px; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font: 700 1.9rem/1.15 var(--serif); margin: 0 0 4px; text-wrap: balance; }
+h3 { font: 600 1rem/1.3 var(--sans); margin: 28px 0 8px; }
+.eyebrow { font: 500 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+p { margin: 0 0 12px; }
+.lead { font-size: 1.1rem; color: var(--muted); max-width: 40rem; }
+section.stage { padding-top: 56px; margin-top: 56px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+.en { color: var(--muted); font-style: italic; }
+.demo { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin: 18px 0; min-width: 0; }
+.demo-title { font: 500 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.kpis { display: flex; flex-wrap: wrap; gap: 24px; margin: 16px 0; }
+.kpi b { display: block; font: 600 1.5rem/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: .8rem; color: var(--muted); }
+.lesson { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 18px 0; }
+.lesson b { color: var(--accent); }
+.mono { font-family: var(--mono); font-size: .88em; }
+.prose-sample { font: 1.02rem/1.6 var(--serif); white-space: pre-wrap; background: var(--paper); border-radius: 8px; padding: 14px; max-height: 15rem; overflow: auto; }
+button, select, input[type=range], textarea { font: inherit; color: inherit; }
+button.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-size: .85rem; cursor: pointer; }
+button.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+button.act { border: 0; background: var(--accent); color: var(--paper); border-radius: 6px; padding: 8px 14px; font-weight: 500; cursor: pointer; }
+button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.note { font-size: .82rem; color: var(--muted); }
+svg text { fill: var(--muted); font: 11px var(--mono); }
+.scroll-x { overflow-x: auto; }
+
+/* ladder */
+.ladder { display: grid; gap: 6px; margin: 24px 0 8px; }
+.ladder .r { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 3.4rem; gap: 10px; align-items: center; font-size: .88rem; }
+.ladder .bar { height: 14px; border-radius: 3px; background: var(--line); }
+.ladder .bar i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+.ladder .r.dim .bar i { background: var(--muted); opacity: .45; }
+.ladder .num { font: .85rem var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* pipeline */
+.pipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; counter-reset: step; }
+.pipe div { border: 1px solid var(--line); border-radius: 8px; padding: 10px; font-size: .82rem; background: var(--surface); }
+.pipe div b { display: block; font-size: .9rem; margin-bottom: 2px; }
+.pipe div b::before { counter-increment: step; content: counter(step) " · "; color: var(--accent); font-family: var(--mono); }
+
+/* works map */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .82rem; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.genre { margin-top: 12px; }
+.genre-name { font: 500 .72rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+.tiles { display: flex; flex-wrap: wrap; gap: 3px; align-items: flex-end; }
+.tile { border: 0; padding: 0; border-radius: 2px; cursor: pointer; }
+.tile:hover, .tile:focus-visible, .tile.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+.split-bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; margin: 10px 0 4px; }
+.split-bar div { display: flex; align-items: center; justify-content: center; color: var(--paper); font: 500 .72rem var(--mono); min-width: 0; overflow: hidden; }
+
+/* bigram */
+.keys { display: flex; flex-wrap: wrap; gap: 3px; }
+.keys button { width: 2em; height: 2em; border: 1px solid var(--line); background: var(--paper); border-radius: 4px; font: .85rem var(--mono); cursor: pointer; padding: 0; }
+.keys button[aria-pressed="true"] { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.probs { display: grid; gap: 4px; margin-top: 12px; }
+.probs .r { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) 3.5em; gap: 8px; align-items: center; font: .85rem var(--mono); }
+.probs .bar { height: 12px; background: var(--accent); border-radius: 2px; }
+
+/* attention */
+.sent { display: flex; flex-wrap: wrap; gap: 2px; font: 1rem var(--mono); }
+.sent button { border: 0; min-width: 1.15em; padding: 3px 1px; border-radius: 3px; background: transparent; cursor: pointer; font: inherit; color: var(--ink); position: relative; }
+.sent button.q { outline: 2px solid var(--ink); }
+.heads { display: grid; grid-template-columns: auto repeat(4, minmax(0, 1fr)); gap: 4px; font-size: .78rem; align-items: center; margin-bottom: 14px; }
+.heads button { border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 5px 4px; cursor: pointer; font: .75rem/1.25 var(--mono); text-align: left; min-width: 0; }
+.heads button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.heads .lab { color: var(--muted); font: .72rem var(--mono); }
+
+/* bpe */
+textarea#bpe-in { width: 100%; min-height: 4.5em; border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--paper); resize: vertical; font: 1rem/1.5 var(--serif); }
+.toks { display: flex; flex-wrap: wrap; gap: 3px 2px; margin-top: 12px; font: .92rem/1.2 var(--mono); }
+.toks span { padding: 3px 3px; border-radius: 3px; white-space: pre; }
+.toks span.nl { flex-basis: 100%; height: 0; padding: 0; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.sweep { display: grid; gap: 4px; font: .82rem var(--mono); }
+.sweep .r { display: grid; grid-template-columns: 4.2em minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: center; }
+.sweep .r.pick { font-weight: 600; color: var(--accent); }
+.sweep .b { height: 12px; border-radius: 2px; position: relative; }
+.sweep .hdr { color: var(--muted); }
+table.cmp { border-collapse: collapse; width: 100%; font-size: .88rem; font-variant-numeric: tabular-nums; }
+table.cmp th, table.cmp td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+table.cmp th:first-child, table.cmp td:first-child { text-align: left; }
+table.cmp th { font: 500 .72rem var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+table.cmp tr.best td { font-weight: 600; }
+footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 0 64px; }
+  nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; flex-direction: row; overflow-x: auto; gap: 2px;
+    background: var(--paper); border-bottom: 1px solid var(--line); margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 8px max(16px, env(safe-area-inset-left, 0px)); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+  nav.rail .brand, nav.rail .v { display: none; }
+  nav.rail a { grid-template-columns: auto auto; white-space: nowrap; }
+  header.hero { padding-top: 28px; }
+  section.stage { scroll-margin-top: 64px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ladder .bar i, .probs .bar { transition: width .35s ease; }
+}
+</style>
+
+<div class="wrap">
+  <nav class="rail" aria-label="Etapas">
+    <div class="brand">machado-gpt</div>
+    <a href="#inicio"><span class="n">·</span><span>Visão geral</span><span class="v"></span></a>
+    <a href="#corpus"><span class="n">1</span><span>Corpus</span><span class="v"></span></a>
+    <a href="#bigrama"><span class="n">2</span><span>Bigrama</span><span class="v">3,33</span></a>
+    <a href="#gpt"><span class="n">3</span><span>GPT por caracteres</span><span class="v">2,22</span></a>
+    <a href="#bpe"><span class="n">4</span><span>Tokenizador BPE</span><span class="v"></span></a>
+    <a href="#treino"><span class="n">5</span><span>Treino na GPU</span><span class="v">1,66</span></a>
+    <a href="#proximo"><span class="n">6</span><span>Próximo passo</span><span class="v"></span></a>
+  </nav>
+
+  <main>
+    <header class="hero" id="inicio">
+      <div class="eyebrow">Um modelo de linguagem do zero</div>
+      <h1>Machado-GPT por dentro</h1>
+      <p class="lead">Cinco etapas para treinar um pequeno GPT com a obra de Machado de Assis, cada uma mostrada com os dados e os modelos de verdade do projeto. Tudo aqui roda no seu navegador.</p>
+
+      <h3>A régua de todo o projeto: bits por byte</h3>
+      <p>Quantos bits, em média, o modelo precisa para adivinhar cada byte de um texto de Machado que ele <b>nunca viu</b> (a validação, <span class="en">validation</span>). Quanto menor, melhor ele prevê. Como a medida é por byte, ela compara modelos que cortam o texto de jeitos diferentes.</p>
+      <div class="ladder" id="ladder" role="img" aria-label="Bits por byte na validação, do pior ao melhor modelo"></div>
+      <p class="note">Barras cinzas: referências sem aprendizado de sequência. Barras coloridas: os modelos treinados nas etapas 2 a 5.</p>
+    </header>
+
+    <section class="stage" id="corpus">
+      <div class="eyebrow">Etapa 1</div>
+      <h2>Corpus</h2>
+      <p class="lead">Antes de qualquer modelo, um texto limpo, com procedência (<span class="en">provenance</span>) conhecida e dividido sem vazamento (<span class="en">leakage</span>).</p>
+      <p>Os PDFs vêm de um repositório público com as obras completas. Cada arquivo é conferido por hash, e o texto é extraído com regras medidas uma a uma: cabeçalhos da edição, notas de rodapé, hifenização, versos, epígrafes e falas de teatro.</p>
+      <div class="pipe">
+        <div><b>Download</b>31 MB, cada arquivo conferido por SHA-1 e SHA-256</div>
+        <div><b>Extração</b>tamanho da fonte e espaços entre linhas separam texto, notas e versos</div>
+        <div><b>Exclusões</b>34 trechos de outros autores ou de editores, com evidência</div>
+        <div><b>Duplicatas</b>obras que repetem 90% de outra saem (sequências de 8 palavras)</div>
+        <div><b>Divisão</b>por obra inteira, com hash determinístico</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-title">As 110 obras, coloridas pelo conjunto em que caíram</div>
+        <div class="legend" id="split-legend"></div>
+        <div class="split-bar" id="split-bar" aria-hidden="true"></div>
+        <div id="works"></div>
+        <p class="note" id="work-info" aria-live="polite">Toque numa obra para ver o nome e o tamanho. A área de cada quadrado é proporcional ao número de palavras.</p>
+      </div>
+      <p>Por que dividir <b>por obra</b>, e não sortear parágrafos? Se metade de <i>Dom Casmurro</i> estivesse no treino (<span class="en">training</span>) e metade na validação, o modelo seria testado num livro que já conhece em parte: personagens, assunto, frases. A nota sairia otimista. Obras com versões parecidas ficam no mesmo grupo, e o grupo inteiro cai num só conjunto.</p>
+      <div class="lesson"><b>Lição:</b> cada regra de extração foi descoberta medindo o resultado, não imaginando o PDF. E as regras contra vazamento têm testes automatizados, não só boa intenção.</div>
+    </section>
+
+    <section class="stage" id="bigrama">
+      <div class="eyebrow">Etapa 2</div>
+      <h2>Bigrama</h2>
+      <p class="lead">O modelo mais simples possível: o próximo caractere depende só do caractere atual.</p>
+      <p>Contamos, no treino, quantas vezes cada caractere aparece depois de cada outro. Dividindo pela soma da linha, as contagens viram probabilidades. É uma tabela, e é a linha de base (<span class="en">baseline</span>) que todo modelo seguinte precisa bater.</p>
+      <div class="demo">
+        <div class="demo-title">Escolha um caractere: o que vem depois dele no Machado?</div>
+        <div class="keys" id="keys" role="group" aria-label="Caracteres"></div>
+        <div class="probs" id="probs" aria-live="polite"></div>
+        <h3>Gerar texto sorteando caractere a caractere</h3>
+        <div class="row"><button class="act" id="bg-gen" type="button">Gerar 300 caracteres</button><span class="note">usa as contagens reais do treino</span></div>
+        <div class="prose-sample" id="bg-out" style="margin-top:12px"></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b id="k-uni">6,95</b><span>sorteio uniforme</span></div>
+        <div class="kpi"><b id="k-unig">4,35</b><span>só a frequência de cada letra</span></div>
+        <div class="kpi"><b id="k-big">3,33</b><span>bigrama (bits por byte)</span></div>
+      </div>
+      <div class="lesson"><b>Lição:</b> o bigrama acerta a forma das sílabas ("qu" sempre seguido de vogal, acentos no lugar certo), mas não forma palavras. Um caractere de contexto é pouco.</div>
+    </section>
+
+    <section class="stage" id="gpt">
+      <div class="eyebrow">Etapa 3</div>
+      <h2>GPT por caracteres</h2>
+      <p class="lead">Um Transformer escrito peça por peça: cada posição olha para as anteriores e decide quais importam.</p>
+      <p>Esse "olhar" é a atenção (<span class="en">attention</span>). Para cada caractere, o modelo calcula um peso para cada caractere anterior e mistura o que eles carregam. O modelo tem 4 camadas (<span class="en">layers</span>) com 4 cabeças (<span class="en">heads</span>) cada; cada cabeça aprende sozinha um jeito diferente de olhar.</p>
+      <div class="demo">
+        <div class="demo-title">Atenção real do modelo treinado, numa frase da validação</div>
+        <div class="heads" id="heads" role="group" aria-label="Escolha camada e cabeça"></div>
+        <div class="sent" id="sent"></div>
+        <p class="note" id="att-info" aria-live="polite" style="margin-top:10px"></p>
+      </div>
+      <p>Algumas cabeças viraram especialistas. A <span class="mono">0.3</span> olha quase só o caractere anterior; a <span class="mono">0.2</span>, exatamente dois para trás; a <span class="mono">1.3</span> procura o último espaço, ou seja, o começo da palavra atual. Nas camadas de cima, a distância média do olhar cresce de ~3 para ~16 caracteres.</p>
+      <div class="demo">
+        <div class="demo-title">Treino na CPU: perda por caractere</div>
+        <div id="chart3"></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>846.592</b><span>parâmetros (<span class="en">parameters</span>)</span></div>
+        <div class="kpi"><b>25 min</b><span>de treino na CPU</span></div>
+        <div class="kpi"><b>2,22</b><span>bits por byte</span></div>
+      </div>
+      <h3>O que ele escreve</h3>
+      <div class="prose-sample" id="gpt3-sample"></div>
+      <div class="lesson"><b>Lição:</b> com contexto, aparecem palavras reais, travessões de diálogo e parágrafos. Mas treino e validação terminaram quase iguais: o limite foi o tempo de computação, não os dados.</div>
+    </section>
+
+    <section class="stage" id="bpe">
+      <div class="eyebrow">Etapa 4</div>
+      <h2>Tokenizador BPE</h2>
+      <p class="lead">Em vez de letras, pedaços de palavra aprendidos do próprio texto.</p>
+      <p>O BPE (<span class="en">Byte Pair Encoding</span>) começa com os 256 bytes e repete uma regra: junta o par vizinho mais frequente do treino num símbolo (<span class="en">token</span>) novo. Depois de 3.840 junções, o vocabulário (<span class="en">vocabulary</span>) tem 4.096 símbolos. Este é o tokenizador (<span class="en">tokenizer</span>) treinado no projeto, rodando aqui:</p>
+      <div class="demo">
+        <div class="demo-title">Digite qualquer texto</div>
+        <textarea id="bpe-in" aria-label="Texto para tokenizar">Não consultes dicionários. Casmurro não está aqui no sentido que eles lhe dão.</textarea>
+        <div style="margin-top:14px">
+          <label for="bpe-k" class="note">Junções aprendidas usadas: <b class="mono" id="bpe-kv">3840</b> de 3.840</label>
+          <input type="range" id="bpe-k" min="0" max="3840" step="1" value="3840">
+        </div>
+        <div class="toks" id="toks"></div>
+        <div class="kpis" style="margin-bottom:0">
+          <div class="kpi"><b id="t-bytes">0</b><span>bytes UTF-8</span></div>
+          <div class="kpi"><b id="t-toks">0</b><span>símbolos</span></div>
+          <div class="kpi"><b id="t-ratio">0</b><span>bytes por símbolo</span></div>
+        </div>
+        <p class="note">Arraste o controle para 0 e veja o texto voltar a bytes; suba devagar e veja as sílabas e palavras se formando, na ordem em que o BPE as aprendeu. Um símbolo cinza é um byte solto de um caractere acentuado ou desconhecido.</p>
+      </div>
+      <h3>Que tamanho de vocabulário?</h3>
+      <p>Vocabulário maior comprime mais, mas cada símbolo aparece menos vezes no treino e fica mal aprendido. As junções são aprendidas em ordem, então um único treino mede todos os tamanhos:</p>
+      <div class="demo">
+        <div class="sweep" id="sweep"></div>
+        <p class="note" style="margin-top:10px">4.096 é o joelho: dobrar para 8.192 melhora a compressão em só 12%, mas um terço das junções passa a ter menos de 50 ocorrências.</p>
+      </div>
+      <div class="lesson"><b>Lição:</b> todos os testes passavam, e a primeira execução no corpus inteiro falhou: o <span class="mono">_</span> sumia na pré-tokenização. Testes com exemplos escolhidos verificam o que imaginamos; o dado inteiro pega o resto.</div>
+    </section>
+
+    <section class="stage" id="treino">
+      <div class="eyebrow">Etapa 5</div>
+      <h2>Treino na GPU</h2>
+      <p class="lead">Dois GPTs com BPE treinados na GPU gratuita do Colab. O limite deixou de ser o tempo e passou a ser a quantidade de texto.</p>
+      <p>Cada modelo viu o treino 36 vezes (<span class="en">epochs</span>). O corpus foi regenerado no Colab e conferido byte a byte contra o original antes do treino. As curvas mostram a perda (<span class="en">loss</span>) no treino e na validação inteira, a cada 100 passos.</p>
+      <div class="demo">
+        <div class="row" role="group" aria-label="Modelo" style="margin-bottom:10px">
+          <button class="chip" type="button" data-m="small" aria-pressed="false">pequeno · 4,3 M</button>
+          <button class="chip" type="button" data-m="medium" aria-pressed="true">médio · 12,3 M</button>
+        </div>
+        <div id="chart5"></div>
+        <p class="note" id="gap-info" aria-live="polite"></p>
+      </div>
+      <p>A área sombreada é a distância entre treino e validação: o quanto o modelo prevê melhor o texto que já viu do que obras novas. Quando ela cresce enquanto a validação para de cair, o modelo está decorando, e não generalizando. Isso é sobreajuste (<span class="en">overfitting</span>).</p>
+      <div class="demo scroll-x">
+        <table class="cmp" id="cmp"></table>
+      </div>
+      <h3>O que eles escrevem</h3>
+      <div class="row" role="group" aria-label="Amostra" id="sample-pick" style="margin-bottom:10px"></div>
+      <div class="prose-sample" id="gpt5-sample"></div>
+      <div class="lesson"><b>Lição:</b> triplicar os parâmetros rendeu 2% na validação, e a distância chegou a 0,85. Com 2,25 milhões de símbolos de treino, mais capacidade vira memória. Por isso o modelo grande não foi treinado.</div>
+    </section>
+
+    <section class="stage" id="proximo">
+      <div class="eyebrow">Etapa 6 · opcional</div>
+      <h2>Próximo passo: mais texto</h2>
+      <p class="lead">Se o limite são os dados, a saída é ler mais português antes de ler Machado.</p>
+      <p>Primeiro, um pré-treino (<span class="en">pretraining</span>) no Wikisource em português: cerca de 34 milhões de palavras de textos de época, 26 vezes o treino de Machado, sem nenhuma obra dele. Depois, um ajuste fino (<span class="en">fine-tuning</span>) só com o treino de Machado. A pergunta: "português geral + Machado" bate "só Machado", hoje em 1,66 bits por byte?</p>
+    </section>
+
+    <footer>
+      Diários completos de cada etapa no repositório, em <span class="mono">docs/etapas/</span>. Números medidos na validação; amostras geradas pelos modelos do projeto, sem edição.
+    </footer>
+  </main>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const fmt = (x, d = 2) => x.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  /* ---------- ladder ---------- */
+  const s5 = D.stage5;
+  const ladder = [
+    ["sorteio uniforme", D.stage2.uniform, true],
+    ["frequência das letras", D.stage2.unigram, true],
+    ["bigrama · etapa 2", D.stage2.bigram, false],
+    ["GPT caracteres · etapa 3", D.stage3.val.bits_per_byte, false],
+    ["GPT BPE pequeno · etapa 5", s5.small.val, false],
+    ["GPT BPE médio · etapa 5", s5.medium.val, false],
+  ];
+  $("ladder").innerHTML = ladder.map(([n, v, dim]) =>
+    `<div class="r${dim ? " dim" : ""}"><span>${n}</span><div class="bar"><i style="width:${(100 * v / 7).toFixed(1)}%"></i></div><span class="num">${fmt(v)}</span></div>`).join("");
+
+  /* ---------- nav highlight ---------- */
+  const links = [...document.querySelectorAll("nav.rail a")];
+  const secs = links.map((a) => document.querySelector(a.getAttribute("href")));
+  const onScroll = () => {
+    let cur = 0;
+    secs.forEach((s, i) => { if (s.getBoundingClientRect().top < window.innerHeight * 0.35) cur = i; });
+    links.forEach((a, i) => a.classList.toggle("on", i === cur));
+  };
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* ---------- works map ---------- */
+  const SPL = { train: ["treino", "--train"], val: ["validação", "--val"], test: ["teste", "--test"] };
+  const words = { train: 0, val: 0, test: 0 };
+  D.works.forEach((w) => (words[w.s] += w.w));
+  const total = words.train + words.val + words.test;
+  $("split-legend").innerHTML = Object.entries(SPL).map(([k, [n, c]]) =>
+    `<span><i style="background:var(${c})"></i>${n}: ${words[k].toLocaleString("pt-BR")} palavras (${Math.round(100 * words[k] / total)}%)</span>`).join("");
+  $("split-bar").innerHTML = Object.entries(SPL).map(([k, [n, c]]) =>
+    `<div style="width:${100 * words[k] / total}%;background:var(${c})">${Math.round(100 * words[k] / total)}%</div>`).join("");
+  const GEN = { romance: "Romances", conto: "Contos", "crônica": "Crônicas", "crítica": "Crítica", poesia: "Poesia", teatro: "Teatro", "miscelânea": "Miscelânea" };
+  const maxW = Math.max(...D.works.map((w) => w.w));
+  const byGenre = {};
+  D.works.forEach((w, i) => (byGenre[w.g] = byGenre[w.g] || []).push(i));
+  $("works").innerHTML = Object.keys(byGenre).sort((a, b) => byGenre[b].length - byGenre[a].length).map((g) => {
+    const tiles = byGenre[g].sort((a, b) => D.works[b].w - D.works[a].w).map((i) => {
+      const w = D.works[i], s = Math.max(9, Math.round(64 * Math.sqrt(w.w / maxW)));
+      return `<button class="tile" type="button" data-i="${i}" style="width:${s}px;height:${s}px;background:var(${SPL[w.s][1]})" aria-label="${esc(w.t)}, ${w.w} palavras, ${SPL[w.s][0]}"></button>`;
+    }).join("");
+    return `<div class="genre"><div class="genre-name">${GEN[g] || g} · ${byGenre[g].length}</div><div class="tiles">${tiles}</div></div>`;
+  }).join("");
+  $("works").addEventListener("click", (e) => {
+    const b = e.target.closest(".tile"); if (!b) return;
+    document.querySelectorAll(".tile.sel").forEach((t) => t.classList.remove("sel"));
+    b.classList.add("sel");
+    const w = D.works[+b.dataset.i];
+    $("work-info").innerHTML = `<b>${esc(w.t)}</b> · ${w.w.toLocaleString("pt-BR")} palavras · ${SPL[w.s][0]}`;
+  });
+
+  /* ---------- bigram ---------- */
+  const BC = [...D.bigram.chars], counts = D.bigram.counts;
+  const show = (c) => (c === " " ? "␣" : c === "\n" ? "↵" : c);
+  const keyOrder = BC.map((c, i) => i).sort((a, b) => BC[a].localeCompare(BC[b], "pt"));
+  $("keys").innerHTML = keyOrder.map((i) => `<button type="button" data-i="${i}" aria-pressed="false" aria-label="${BC[i] === " " ? "espaço" : BC[i] === "\n" ? "quebra de linha" : BC[i]}">${esc(show(BC[i]))}</button>`).join("");
+  function pick(i) {
+    document.querySelectorAll("#keys button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.i === i)));
+    const row = counts[i], sum = row.reduce((a, b) => a + b, 0);
+    const top = row.map((c, j) => [j, c]).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    $("probs").innerHTML = `<div class="note">Depois de <b class="mono">${esc(show(BC[i]))}</b> (${sum.toLocaleString("pt-BR")} ocorrências no treino):</div>` +
+      top.map(([j, c]) => `<div class="r"><span>${esc(show(BC[j]))}</span><div class="bar" style="width:${(100 * c / top[0][1]).toFixed(1)}%"></div><span>${fmt(100 * c / sum, 1)}%</span></div>`).join("");
+  }
+  $("keys").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) pick(+b.dataset.i); });
+  pick(BC.indexOf("q") >= 0 ? BC.indexOf("q") : 0);
+  function bigramText(n) {
+    let i = BC.indexOf("\n"), out = "";
+    for (let k = 0; k < n; k++) {
+      const row = counts[i], sum = row.reduce((a, b) => a + b, 0);
+      let r = Math.random() * sum, j = 0;
+      while (r >= row[j]) { r -= row[j]; j++; }
+      i = j; out += BC[i];
+    }
+    return out.trim();
+  }
+  $("bg-gen").addEventListener("click", () => ($("bg-out").textContent = bigramText(300)));
+  $("bg-out").textContent = bigramText(300);
+  $("k-uni").textContent = fmt(D.stage2.uniform); $("k-unig").textContent = fmt(D.stage2.unigram); $("k-big").textContent = fmt(D.stage2.bigram);
+
+  /* ---------- attention ---------- */
+  const S = [...D.stage3.sentence], A = D.stage3.attention, P = D.stage3.profiles;
+  let L = 0, H = 3, Q = S.length - 1;
+  $("heads").innerHTML = `<span></span>` + [0, 1, 2, 3].map((h) => `<span class="lab">cabeça ${h}</span>`).join("") +
+    A.map((layer, l) => `<span class="lab">camada ${l}</span>` + layer.map((_, h) => {
+      const p = P[l][h];
+      return `<button type="button" data-l="${l}" data-h="${h}" aria-pressed="false">${l}.${h}<br><span class="note">${fmt(p.distance, 1)} car.</span></button>`;
+    }).join("")).join("");
+  $("sent").innerHTML = S.map((c, t) => `<button type="button" data-t="${t}" aria-label="posição ${t}: ${c === " " ? "espaço" : esc(c)}">${c === " " ? "·" : esc(c)}</button>`).join("");
+  function drawAtt() {
+    document.querySelectorAll("#heads button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.l === L && +b.dataset.h === H)));
+    const row = A[L][H][Q];
+    const acc = css("--accent");
+    document.querySelectorAll("#sent button").forEach((b) => {
+      const t = +b.dataset.t;
+      b.classList.toggle("q", t === Q);
+      const w = t <= Q ? +row[t] / 9 : 0;
+      b.style.background = w > 0 ? `color-mix(in srgb, ${acc} ${Math.round(w * 85)}%, transparent)` : "transparent";
+      b.style.color = t > Q ? css("--line") : "";
+    });
+    const p = P[L][H];
+    $("att-info").innerHTML = `Cabeça <b class="mono">${L}.${H}</b> no caractere <b class="mono">${S[Q] === " " ? "espaço" : esc(S[Q])}</b>: quanto mais escuro, mais peso. Em média, esta cabeça olha ${fmt(p.distance, 1)} caracteres para trás, põe ${Math.round(100 * p.previous)}% do peso no caractere anterior e ${Math.round(100 * p.last_space)}% no último espaço. Os caracteres à direita ficam apagados: o modelo não pode ver o futuro (máscara causal, <span class="en">causal mask</span>).`;
+  }
+  $("heads").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { L = +b.dataset.l; H = +b.dataset.h; drawAtt(); } });
+  const setQ = (e) => { const b = e.target.closest("button"); if (b) { Q = +b.dataset.t; drawAtt(); } };
+  $("sent").addEventListener("mouseover", setQ); $("sent").addEventListener("click", setQ); $("sent").addEventListener("focusin", setQ);
+  drawAtt();
+  $("gpt3-sample").textContent = D.stage3.samples["Capitu"];
+
+  /* ---------- line chart ---------- */
+  function lineChart(el, series, opt) {
+    const W = 640, Hh = 280, m = { l: 44, r: 12, t: 12, b: 34 };
+    const xs = series.flatMap((s) => s.pts.map((p) => p[0])), xmax = opt.xmax || Math.max(...xs);
+    const y0 = opt.ymin, y1 = opt.ymax;
+    const X = (x) => m.l + (W - m.l - m.r) * x / xmax, Y = (y) => m.t + (Hh - m.t - m.b) * (1 - (Math.min(y, y1) - y0) / (y1 - y0));
+    let g = "";
+    for (let v = y0; v <= y1 + 1e-9; v += opt.ystep) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${fmt(v, opt.ydec ?? 1)}</text>`;
+    for (let v = 0; v <= xmax; v += opt.xstep) g += `<text x="${X(v)}" y="${Hh - m.b + 16}" text-anchor="middle">${v.toLocaleString("pt-BR")}</text>`;
+    g += `<text x="${W - m.r}" y="${Hh - 4}" text-anchor="end">${opt.xlabel}</text>`;
+    if (opt.band) {
+      const [a, b] = opt.band;
+      const top = a.pts.map((p) => `${X(p[0])},${Y(p[1])}`), bot = b.pts.slice().reverse().map((p) => `${X(p[0])},${Y(p[1])}`);
+      g += `<polygon points="${top.concat(bot).join(" ")}" fill="var(--val)" fill-opacity="0.14" stroke="none"/>`;
+    }
+    series.forEach((s) => {
+      g += `<polyline points="${s.pts.map((p) => `${X(p[0])},${Y(p[1])}`).join(" ")}" fill="none" stroke="var(${s.color})" stroke-width="${s.w || 2}" stroke-dasharray="${s.dash || ""}" stroke-opacity="${s.op || 1}" stroke-linejoin="round"/>`;
+      const last = s.pts[s.pts.length - 1];
+      if (s.label) g += `<circle cx="${X(last[0])}" cy="${Y(last[1])}" r="3.5" fill="var(${s.color})"/>`;
+    });
+    const legend = series.filter((s) => s.label).map((s) => `<span><i style="background:var(${s.color});opacity:${s.op || 1}"></i>${s.label}</span>`).join("");
+    el.innerHTML = `<div class="scroll-x"><svg viewBox="0 0 ${W} ${Hh}" width="100%" style="min-width:420px;display:block" role="img" aria-label="${opt.aria}">${g}</svg></div><div class="legend" style="margin-top:6px">${legend}</div>`;
+  }
+  const h3 = D.stage3.history;
+  lineChart($("chart3"), [
+    { pts: h3.map((p) => [p.step, p.train]), color: "--train", label: "treino", dash: "5 4" },
+    { pts: h3.map((p) => [p.step, p.val]), color: "--val", label: "validação" },
+  ], { ymin: 1.4, ymax: 3.4, ystep: 0.5, xstep: 500, xlabel: "passo", aria: "Perda do GPT por caracteres caindo de 3,3 para 1,6 em 3.000 passos" });
+
+  /* ---------- BPE ---------- */
+  const M = D.stage4.merges, rank = new Map(M.map((p, i) => [p[0] * 65536 + p[1], i]));
+  const TB = []; for (let i = 0; i < 256; i++) TB.push([i]); M.forEach(([a, b]) => TB.push(TB[a].concat(TB[b])));
+  const PAT = / ?[\p{L}\p{Nl}\p{No}]+| ?\p{Nd}{1,3}| ?(?:[^\s\p{L}\p{N}_]|_)+|\s+(?!\S)|\s+/gu;
+  const enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
+  function encodeChunk(bytes, k) {
+    let ids = bytes;
+    while (ids.length >= 2) {
+      let best = Infinity;
+      for (let i = 0; i + 1 < ids.length; i++) { const r = rank.get(ids[i] * 65536 + ids[i + 1]); if (r !== undefined && r < k && r < best) best = r; }
+      if (best === Infinity) break;
+      const [a, b] = M[best], out = [];
+      for (let i = 0; i < ids.length;) { if (i + 1 < ids.length && ids[i] === a && ids[i + 1] === b) { out.push(256 + best); i += 2; } else { out.push(ids[i]); i++; } }
+      ids = out;
+    }
+    return ids;
+  }
+  function encode(text, k) { const ids = []; for (const m of text.matchAll(PAT)) ids.push(...encodeChunk([...enc.encode(m[0])], k)); return ids; }
+  window.__bpeEncode = encode;
+  const palette = ["--train", "--val", "--test"];
+  function drawBPE() {
+    const text = $("bpe-in").value, k = +$("bpe-k").value;
+    $("bpe-kv").textContent = k.toLocaleString("pt-BR");
+    const ids = encode(text, k);
+    let html = "", n = 0;
+    for (const id of ids) {
+      let s; try { s = dec.decode(new Uint8Array(TB[id])); } catch { s = null; }
+      const col = s === null ? "var(--line)" : `color-mix(in srgb, var(${palette[n % 3]}) 22%, transparent)`;
+      const label = s === null ? TB[id].map((b) => b.toString(16).padStart(2, "0")).join(" ") : s.replace(/\n/g, "↵").replace(/ /g, "␣");
+      html += `<span style="background:${col}" title="símbolo ${id}">${esc(label)}</span>`;
+      if (s && s.includes("\n")) html += `<span class="nl"></span>`;
+      n++;
+    }
+    $("toks").innerHTML = html;
+    const nb = enc.encode(text).length;
+    $("t-bytes").textContent = nb.toLocaleString("pt-BR"); $("t-toks").textContent = ids.length.toLocaleString("pt-BR");
+    $("t-ratio").textContent = ids.length ? fmt(nb / ids.length) : "0";
+  }
+  $("bpe-in").addEventListener("input", drawBPE); $("bpe-k").addEventListener("input", drawBPE); drawBPE();
+  const sw = D.stage4.sweep;
+  $("sweep").innerHTML = `<div class="r hdr"><span>V</span><span>bytes por símbolo</span><span>junções raras (&lt; 50 ocorrências)</span></div>` + sw.map((r) =>
+    `<div class="r${r.vocab_size === 4096 ? " pick" : ""}"><span>${r.vocab_size.toLocaleString("pt-BR")}</span>` +
+    `<span style="display:flex;gap:6px;align-items:center"><span class="b" style="width:${(100 * r.val_bytes_per_token / 4.2).toFixed(1)}%;background:var(--accent)"></span>${fmt(r.val_bytes_per_token)}</span>` +
+    `<span style="display:flex;gap:6px;align-items:center"><span class="b" style="width:${Math.max(0.5, 80 * r.merges_under_50_occurrences).toFixed(1)}%;background:var(--warn)"></span>${r.vocab_size === 256 ? "n/a" : fmt(100 * r.merges_under_50_occurrences, 1) + "%"}</span></div>`).join("");
+
+  /* ---------- stage 5 ---------- */
+  let model = "medium";
+  function draw5() {
+    document.querySelectorAll("[data-m]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.m === model)));
+    const other = model === "small" ? "medium" : "small";
+    const pts = (m, k) => s5[m].history.filter((p) => p.step > 0).map((p) => [p.step, p[k]]);
+    const tr = { pts: pts(model, "train") }, va = { pts: pts(model, "val") };
+    lineChart($("chart5"), [
+      { pts: pts(other, "val"), color: "--muted", w: 1.5, op: 0.5, dash: "2 3", label: `validação do ${other === "small" ? "pequeno" : "médio"}` },
+      { pts: tr.pts, color: "--train", dash: "5 4", label: "treino" },
+      { pts: va.pts, color: "--val", label: "validação" },
+    ], { ymin: 3, ymax: 6.5, ystep: 0.5, xstep: 1000, xlabel: "passo", band: [va, tr], aria: "Curvas de perda de treino e validação do GPT com BPE" });
+    const h = s5[model].history, at = (s) => h.find((p) => p.step === s);
+    const g1 = at(1000).val - at(1000).train, g5 = at(5000).val - at(5000).train;
+    $("gap-info").innerHTML = `Distância entre validação e treino: <b class="mono">${fmt(g1)}</b> no passo 1.000 e <b class="mono">${fmt(g5)}</b> no passo 5.000. Nos últimos 1.000 passos, a validação melhorou só ${fmt(at(4000).val - at(5000).val, 3)}.`;
+  }
+  document.querySelectorAll("[data-m]").forEach((b) => b.addEventListener("click", () => { model = b.dataset.m; draw5(); }));
+  draw5();
+  const rows = [
+    ["Bigrama", "21 mil", "segundos", D.stage2.bigram, null],
+    ["GPT caracteres (CPU)", "0,85 M", "25 min", D.stage3.val.bits_per_byte, null],
+    ["GPT BPE pequeno (T4)", "4,3 M", `${fmt(s5.small.minutes, 1)} min`, s5.small.val, s5.small.test],
+    ["GPT BPE médio (T4)", "12,3 M", `${fmt(s5.medium.minutes, 1)} min`, s5.medium.val, s5.medium.test],
+  ];
+  $("cmp").innerHTML = `<thead><tr><th>modelo</th><th>parâmetros</th><th>treino</th><th>validação</th><th>teste</th></tr></thead><tbody>` +
+    rows.map((r, i) => `<tr class="${i === 3 ? "best" : ""}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${fmt(r[3], 3)}</td><td>${r[4] ? fmt(r[4], 3) : "—"}</td></tr>`).join("") +
+    `</tbody>`;
+  const samples = [["small", "Capitu"], ["medium", "Capitu"], ["medium", "Não consultes dicionários."]];
+  $("sample-pick").innerHTML = samples.map(([m, p], i) =>
+    `<button class="chip" type="button" data-s="${i}" aria-pressed="${i === 1}">${m === "small" ? "pequeno" : "médio"} · “${p.split(" ")[0]}…”</button>`).join("");
+  function showSample(i) {
+    document.querySelectorAll("[data-s]").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.s === i)));
+    const [m, p] = samples[i];
+    $("gpt5-sample").textContent = s5[m].samples[p];
+  }
+  $("sample-pick").addEventListener("click", (e) => { const b = e.target.closest("[data-s]"); if (b) showSample(+b.dataset.s); });
+  showSample(1);
+})();
+</script>
