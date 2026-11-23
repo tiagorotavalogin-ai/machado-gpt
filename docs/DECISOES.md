@@ -379,7 +379,7 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Ação do proprietário:** criou um token *fine-grained* do GitHub
   (`colab-machado-gpt`), só leitura de conteúdo, só deste repositório, validade de 7
   dias, para o Colab clonar o repositório privado. Guardado apenas nos Segredos do Colab.
-- **Revogar** ao fim da etapa 5.
+- **Revogado** pelo proprietário em 2026-11-23, ao fim da etapa 5.
 - **Responsável:** proprietário.
 
 ## 2026-11-23: Etapa 5, resultado e modelo grande descartado
