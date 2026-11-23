@@ -396,3 +396,13 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Checkpoints:** no Drive do proprietário; SHA-256 em `results/05-gpt-bpe-*.json` e no
   diário da etapa.
 - **Responsável:** proprietário.
+
+## 2026-11-23: Bot de conversa fica para projeto futuro
+
+- **Decisão do proprietário:** um bot que converse sobre um assunto específico (ideias:
+  obra de Machado de Assis, notícias de futebol) fica para um projeto futuro, junto com
+  RAG, como o PRD já previa. Este projeto não inclui ajuste por instruções (instruction
+  tuning) nem chat.
+- **Etapa 6 mantida** como proposta: pré-treino (pretraining) no Wikisource em
+  português, sem Machado, e ajuste fino (fine-tuning) com o treino de Machado.
+- **Responsável:** proprietário.
