@@ -4,10 +4,12 @@ Um modelo de linguagem (language model) pequeno, treinado do zero com a obra de 
 construído passo a passo para aprender como um LLM funciona por dentro.
 
 > **Estado:** etapas 1 a 4 concluídas: corpus, bigrama, GPT por caracteres e
-> tokenizador (tokenizer) BPE. Validação (validation): bigrama 2,383 e GPT 1,588
-> nats por caractere. Próxima etapa: treino e avaliação no Colab. Diários:
+> tokenizador (tokenizer) BPE. Validação (validation): bigrama 3,33 e GPT por
+> caracteres 2,22 bits por byte. Em andamento: etapa 5, treino no Colab
+> ([notebook](notebooks/05-colab.ipynb)). Diários:
 > [corpus](docs/etapas/01-corpus.md), [bigrama](docs/etapas/02-bigrama.md),
-> [GPT](docs/etapas/03-gpt-caracteres.md), [BPE](docs/etapas/04-tokenizador-bpe.md).
+> [GPT](docs/etapas/03-gpt-caracteres.md), [BPE](docs/etapas/04-tokenizador-bpe.md),
+> [treino no Colab](docs/etapas/05-treino-colab.md).
 
 ## O que é
 

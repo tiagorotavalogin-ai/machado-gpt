@@ -338,3 +338,38 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Artefatos:** tokenizador e conjuntos codificados em `runs/04-bpe/` (fora do
   Git), reproduzíveis e conferíveis por SHA-256 em `results/04-bpe.json`.
 - **Responsável:** proprietário.
+
+## 2026-11-20: Etapa 5, plano de treino no Colab
+
+- **Ambiente:** Google Colab **gratuito**, GPU T4 (escolha do proprietário). A conta
+  Google é escolhida pelo proprietário; o login e o aceite dos termos do Colab são ações
+  dele, feitas no navegador. O agente não acessa o Colab nem o Drive.
+- **Dados:** o corpus e os símbolos (tokens) são **regenerados no Colab** a partir do commit
+  fixado do luxedo, e conferidos contra o Git: o `git diff` do catálogo (SHA-256 do texto de
+  cada obra) deve sair vazio, e os SHA-256 do tokenizador e dos três conjuntos devem bater
+  com `results/04-bpe.json`. O script de treino recusa dados que não batem. Nada do corpus
+  vai para o Drive.
+- **Acesso ao código:** o repositório é privado. O Colab o clona com um token
+  *fine-grained* do GitHub, só leitura de conteúdo e só deste repositório, com validade
+  curta, guardado nos Segredos do Colab (`GITHUB_TOKEN`). O token vai num cabeçalho do
+  `git clone`, não fica no `.git/config` nem no notebook. Criar e revogar o token é ação
+  do proprietário.
+- **Modelos:** pequeno (4 camadas (layers), C = 256, ~4,3 M de parâmetros (parameters))
+  e médio (6 camadas, C = 384, ~12 M); 4 e 6 cabeças (heads); contexto (context) de 256
+  símbolos; dropout 0,2; matriz compartilhada entre embedding e saída (weight tying). O
+  grande (8 camadas, C = 512) só entra se o médio não mostrar sobreajuste (overfitting).
+- **Treino:** lotes (batches) de 64 janelas (windows); AdamW com lr 10⁻³ (pequeno) e
+  6·10⁻⁴ (médio), warmup de 200 passos e cosseno até 10% do lr; até 5.000 passos; perda
+  (loss) exata na validação (validation) inteira a cada 100 passos; parada antecipada
+  (early stopping) após 10 avaliações sem melhora; precisão mista (mixed precision)
+  float16 com gradient scaler.
+- **Checkpoints:** pasta privada no Drive do proprietário: `best.pt` (melhor pela
+  validação) e `last.pt` (estado completo, a cada 500 passos, para retomar). SHA-256 do
+  `best.pt` em `results/05-gpt-bpe-*.json`. Retomar dá o mesmo resultado que não parar
+  (teste automatizado).
+- **Escolha e teste:** o modelo é escolhido só pela validação; o teste é reportado uma vez,
+  para registro.
+- **Pesos (weights):** não publicados (confirmado pelo proprietário).
+- **Notebook:** `notebooks/05-colab.ipynb`, versionado **sem saídas (outputs)**; toda a
+  lógica fica no pacote, com testes.
+- **Responsável:** proprietário.
