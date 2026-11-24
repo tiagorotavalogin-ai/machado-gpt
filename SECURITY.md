@@ -8,8 +8,8 @@ O código deste projeto é público. Não há versão publicada como pacote, mod
 Use o reporte privado do GitHub: aba **Security** do repositório → **Report a
 vulnerability**. O reporte chega só ao proprietário.
 
-**Estado:** canal ativado em 2026-11-24. O recebimento ainda não foi testado com um
-reporte enviado de outra conta.
+**Estado:** canal ativado em 2026-11-24. O recebimento não foi testado, porque exigiria
+um reporte enviado de outra conta.
 
 Não abra issue pública com credenciais ou detalhes que permitam explorar uma
 vulnerabilidade.

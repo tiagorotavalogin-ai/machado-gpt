@@ -540,5 +540,11 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   - GitHub Actions desativado (não há workflows); token padrão só de leitura, sem
     aprovar pull requests, e aprovação exigida para todo colaborador externo;
   - Projects e Wiki desligados.
-- **Pendente:** testar o recebimento de um reporte privado a partir de outra conta.
+- **Testes (2026-11-24):** visitante anônimo vê o repositório público, a licença MIT e
+  o `SECURITY.md`; o formulário de reporte privado existe e pede login. Push forçado na
+  `main` recusado pela regra (GH013); exclusão da `main` recusada pela proteção da branch
+  padrão do GitHub.
+- **Não testados, por decisão do proprietário** (exigiriam outra conta do GitHub ou um
+  token real): o recebimento de um reporte privado e o bloqueio da push protection.
+  Ficam confirmados só pela configuração lida na API.
 - **Responsável:** proprietário.
