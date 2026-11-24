@@ -1,7 +1,8 @@
 """Build the visual explainer page docs/visual/machado-gpt.html.
 
 Collects the real data of each stage (catalog, bigram counts, attention weights
-of the stage 3 model, BPE merges, stage 5 training curves) and inlines it into
+of the stage 3 model, BPE merges, stage 5 and 6 training curves, the general
+corpus statistics) and inlines it into
 docs/visual/template.html. Needs the local corpus, runs/03-gpt-char/model.pt and
 runs/04-bpe/bpe-4096.json.
 
@@ -99,6 +100,26 @@ def collect() -> dict:
                             "val": r["val"]["bits_per_byte"], "test": r["test"]["bits_per_byte"],
                             "params": r["parameters"], "minutes": round(r["minutes"], 1), "best": r["best_step"],
                             "samples": {k: v[:600] for k, v in r["samples"].items()}}
+
+    # stage 6
+    w = json.load(open(PROJECT_ROOT / "results/06-wikisource.json"))
+    st = w["stats"]
+    out["stage6"] = {"corpus": {
+        "documents": w["documents"], "words": w["words"], "words_by_split": w["words_by_split"],
+        "words_by_source": w["words_by_source"],
+        "quality": {str(q): st.get(f"scanned_words_quality_{q}", 0) for q in range(5)},
+        "machado_by_author_docs": st["machado_by_author_docs"], "machado_by_author_words": st["machado_by_author_words"],
+        "machado_by_text_paragraphs": st["machado_by_text_paragraphs"], "machado_by_text_words": st["machado_by_text_words"],
+        "top_authors": w["top_authors"][:12],
+        "tokens": {s: {k: v[k] for k in ("tokens", "bytes_per_token")} for s, v in w["tokens"]["splits"].items()},
+    }}
+    for phase, extra in (("pretrain", "machado_val"), ("finetune", "general_val")):
+        r = json.load(open(PROJECT_ROOT / f"results/06-{phase}-medium.json"))
+        out["stage6"][phase] = {
+            "history": [{k: round(p[k], 4) for k in ("step", "train", "val", extra)} for p in r["history"]],
+            "eval": {k: round(v["bits_per_byte"], 4) for k, v in r["eval"].items()},
+            "steps": r["train"]["steps"], "minutes": round(r["minutes"], 1), "best": r["best_step"],
+            "samples": {k: v[:600] for k, v in r["samples"].items()}}
     return out
 
 
