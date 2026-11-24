@@ -406,3 +406,47 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Etapa 6 mantida** como proposta: pré-treino (pretraining) no Wikisource em
   português, sem Machado, e ajuste fino (fine-tuning) com o treino de Machado.
 - **Responsável:** proprietário.
+
+## 2026-11-23: Etapa 6, corpus geral do Wikisource
+
+- **Fonte:** dump do Wikisource em português de 2026-11-01
+  (`ptwikisource-20261101-pages-articles.xml.bz2`), fixado por data e conferido pelo
+  SHA-1 que a Wikimedia publica. Entram as obras digitadas (espaço principal) e os
+  livros escaneados, refeitos juntando as páginas "Página:" na ordem.
+- **Licença:** os textos do Wikisource são de domínio público ou de licença livre; o
+  conteúdo editorial do site (transcrições, traduções feitas por editores) é
+  CC BY-SA. O corpus não é versionado nem redistribuído, e os pesos não são
+  publicados. O proprietário confirmou (2026-11-23) que isso basta para o critério
+  "licença verificada" do PRD, sem verificação obra a obra.
+- **Qualidade:** das páginas escaneadas, só as revisadas ao menos uma vez (nível 3 ou
+  4). O nível 1 é OCR bruto (8,6 milhões de palavras descartadas), o 2 é marcado como
+  problemático e o 0 não tem texto.
+- **Dependência nova:** `mwparserfromhell`, só para analisar o wikitexto (parse
+  tree); não esconde nada do modelo nem do treino.
+- **Machado fora do pré-treino (regra, com testes):** sai todo documento cujo
+  cabeçalho ou índice tem Machado de Assis como autor, e todo parágrafo tocado por 2
+  ou mais sequências de 8 palavras em comum com o corpus de Machado (treino,
+  validação e teste), comparadas com grafia normalizada, para pegar edições em
+  ortografia antiga.
+- **Validação geral:** ~1% dos documentos, por SHA-256 do título, só para acompanhar o
+  pré-treino. A validação e o teste de Machado continuam sendo os da etapa 5.
+- **Tokenizador:** o da etapa 4, treinado só no treino de Machado, sem mudança.
+- **Responsável:** proprietário (escolha da fonte); critérios técnicos propostos
+  pelo agente.
+
+## 2026-11-23: Etapa 6, vazamento de *O Almada* corrigido
+
+- **Achado:** a conferência do corpus já gerado contra a validação e o teste de
+  Machado achou *O Almada* (obra da **validação**) dentro do treino do pré-treino, em
+  um documento sem autor no cabeçalho e com um verso por parágrafo. O filtro contava
+  as sequências de 8 palavras dentro de cada parágrafo, e um verso não tem duas.
+- **Correção:** as sequências passam a correr pelo documento inteiro, atravessando
+  parágrafos, e cada sequência em comum conta para todo parágrafo que ela toca. Teste
+  de regressão em `tests/test_build_general.py`.
+- **Resultado:** o filtro por texto foi de 271 parágrafos (31.385 palavras) para 634
+  (33.849). Na nova conferência, nenhum parágrafo toca 2 ou mais sequências da
+  validação ou do teste de Machado; restam 25 sequências isoladas, todas frases feitas
+  ("cada um puxa a brasa para sua sardinha"), nomes ou citações curtas.
+- **Corpus final:** 24.623 documentos e 26,7 milhões de palavras (26,2 M no treino,
+  0,47 M na validação geral), cerca de 20× o treino de Machado (1,3 M).
+- **Responsável:** agente (achado e correção); revisão pelo proprietário.
