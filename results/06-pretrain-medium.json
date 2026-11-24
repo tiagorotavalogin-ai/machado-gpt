@@ -1,0 +1,304 @@
+{
+  "phase": "pretrain",
+  "size": "medium",
+  "model": {
+    "vocab_size": 4096,
+    "block_size": 256,
+    "n_layer": 6,
+    "n_head": 6,
+    "n_embd": 384,
+    "dropout": 0.0,
+    "tie_weights": true
+  },
+  "parameters": 12318720,
+  "train": {
+    "steps": 3254,
+    "batch_size": 64,
+    "learning_rate": 0.0006,
+    "min_learning_rate": 5.9999999999999995e-05,
+    "warmup_steps": 200,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "eval_every": 100,
+    "train_eval_batches": 24,
+    "patience": 1000000000,
+    "save_last_every": 500,
+    "seed": 1337
+  },
+  "git_commit": "d43f5e70c1b9837a74e2c634b954a29f43d5a630",
+  "device": "Tesla T4",
+  "torch": "2.14.1+cu130",
+  "data_sha256": {
+    "tokenizer": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+    "train": "04c378aea5752aa6ab8c9a4798a0d0e05a76710268bd19ce80b3974839b008a9",
+    "val": "455b44c99579616d433517d111f9e619c0e405123e59b6ef9b94abc8bf22768c",
+    "test": "157fe18bf406e22831d27c2586aaa5003df3ad09b965ef0dcb0b9fc797fd043b",
+    "general_train": "544c5c8c4114608a6902f3bb4263ddc39834370e261385cc046b9d0d8b37c7ee",
+    "general_val": "dd0afdd5d787d22e0cea652fae41a475d768a8ca8b99d13259d6b46d79d4eb98"
+  },
+  "stopped": "max steps",
+  "minutes": 14.270837688446045,
+  "best_step": 3254,
+  "history": [
+    {
+      "step": 0,
+      "train": 8.374392708142599,
+      "val": 8.381447082260541,
+      "minutes": 0.08171364466349283,
+      "machado_val": 8.379987855925307
+    },
+    {
+      "step": 100,
+      "train": 6.143925964832306,
+      "val": 6.294994897046554,
+      "minutes": 0.44500926733016966,
+      "machado_val": 6.242512002218033
+    },
+    {
+      "step": 200,
+      "train": 5.195827682813008,
+      "val": 5.318519611709357,
+      "minutes": 0.8165064732233683,
+      "machado_val": 5.399343548089326
+    },
+    {
+      "step": 300,
+      "train": 4.815212845802307,
+      "val": 4.9325627393061575,
+      "minutes": 1.200126016139984,
+      "machado_val": 5.075967266187521
+    },
+    {
+      "step": 400,
+      "train": 4.655113657315572,
+      "val": 4.7604446432715255,
+      "minutes": 1.6116815686225892,
+      "machado_val": 4.914593251375887
+    },
+    {
+      "step": 500,
+      "train": 4.4928227464358015,
+      "val": 4.6051506420173265,
+      "minutes": 2.0649875521659853,
+      "machado_val": 4.772483324892794
+    },
+    {
+      "step": 600,
+      "train": 4.327078700065613,
+      "val": 4.4504479048107095,
+      "minutes": 2.516081217924754,
+      "machado_val": 4.64606320993739
+    },
+    {
+      "step": 700,
+      "train": 4.2226418654123945,
+      "val": 4.334012084701948,
+      "minutes": 2.938628311951955,
+      "machado_val": 4.529217371905481
+    },
+    {
+      "step": 800,
+      "train": 4.104490180810292,
+      "val": 4.230465540690334,
+      "minutes": 3.3804792284965517,
+      "machado_val": 4.4428856217933035
+    },
+    {
+      "step": 900,
+      "train": 4.030910541613896,
+      "val": 4.149664869942456,
+      "minutes": 3.8228573322296144,
+      "machado_val": 4.3599755197104715
+    },
+    {
+      "step": 1000,
+      "train": 3.953009953101476,
+      "val": 4.069943324713592,
+      "minutes": 4.255628689130147,
+      "machado_val": 4.301381544865623
+    },
+    {
+      "step": 1100,
+      "train": 3.9092030227184296,
+      "val": 3.997692687642962,
+      "minutes": 4.701792673269908,
+      "machado_val": 4.2417787065141885
+    },
+    {
+      "step": 1200,
+      "train": 3.83806449174881,
+      "val": 3.948302318351778,
+      "minutes": 5.141636653741201,
+      "machado_val": 4.195439036548817
+    },
+    {
+      "step": 1300,
+      "train": 3.791143278280894,
+      "val": 3.8997294748352136,
+      "minutes": 5.575812959671021,
+      "machado_val": 4.14864693275651
+    },
+    {
+      "step": 1400,
+      "train": 3.735466251770655,
+      "val": 3.863208306729372,
+      "minutes": 6.01084056297938,
+      "machado_val": 4.110251399229935
+    },
+    {
+      "step": 1500,
+      "train": 3.6757149398326874,
+      "val": 3.816094946962435,
+      "minutes": 6.448228172461191,
+      "machado_val": 4.081267538920234
+    },
+    {
+      "step": 1600,
+      "train": 3.640095462401708,
+      "val": 3.789446874723745,
+      "minutes": 6.8930129686991375,
+      "machado_val": 4.051146995917471
+    },
+    {
+      "step": 1700,
+      "train": 3.6178217232227325,
+      "val": 3.754816313747638,
+      "minutes": 7.330891533692678,
+      "machado_val": 4.022020231375978
+    },
+    {
+      "step": 1800,
+      "train": 3.6052320500214896,
+      "val": 3.7208379526961135,
+      "minutes": 7.769207568963369,
+      "machado_val": 3.9912025058181673
+    },
+    {
+      "step": 1900,
+      "train": 3.5524750550587973,
+      "val": 3.7043012292584065,
+      "minutes": 8.207277862230937,
+      "machado_val": 3.966535610395714
+    },
+    {
+      "step": 2000,
+      "train": 3.5419239699840546,
+      "val": 3.6708397019533323,
+      "minutes": 8.645577041308085,
+      "machado_val": 3.945537344848878
+    },
+    {
+      "step": 2100,
+      "train": 3.5111984411875405,
+      "val": 3.647152746651095,
+      "minutes": 9.095385090510051,
+      "machado_val": 3.924322661024887
+    },
+    {
+      "step": 2200,
+      "train": 3.5284058352311454,
+      "val": 3.628916008502793,
+      "minutes": 9.53852188984553,
+      "machado_val": 3.903316285733161
+    },
+    {
+      "step": 2300,
+      "train": 3.446888029575348,
+      "val": 3.610749942072716,
+      "minutes": 9.978403886159262,
+      "machado_val": 3.884240295451037
+    },
+    {
+      "step": 2400,
+      "train": 3.4443541169166565,
+      "val": 3.588620892946926,
+      "minutes": 10.413295145829519,
+      "machado_val": 3.8691116608953764
+    },
+    {
+      "step": 2500,
+      "train": 3.4243741631507874,
+      "val": 3.5689645456964256,
+      "minutes": 10.848885854085287,
+      "machado_val": 3.8520422729165142
+    },
+    {
+      "step": 2600,
+      "train": 3.4196698864301047,
+      "val": 3.5596823469752805,
+      "minutes": 11.295457021395366,
+      "machado_val": 3.8396344909872373
+    },
+    {
+      "step": 2700,
+      "train": 3.382674624522527,
+      "val": 3.550508698243569,
+      "minutes": 11.738223723570506,
+      "machado_val": 3.8317005083374105
+    },
+    {
+      "step": 2800,
+      "train": 3.3891308108965554,
+      "val": 3.5395931864391796,
+      "minutes": 12.180063291390736,
+      "machado_val": 3.822488824393393
+    },
+    {
+      "step": 2900,
+      "train": 3.362851728995641,
+      "val": 3.526906975256503,
+      "minutes": 12.619543147087096,
+      "machado_val": 3.8117860869441507
+    },
+    {
+      "step": 3000,
+      "train": 3.3561789989471436,
+      "val": 3.520637392424458,
+      "minutes": 13.057715388139089,
+      "machado_val": 3.805126775293165
+    },
+    {
+      "step": 3100,
+      "train": 3.3710681001345315,
+      "val": 3.513068683413839,
+      "minutes": 13.50646920601527,
+      "machado_val": 3.795528547283155
+    },
+    {
+      "step": 3200,
+      "train": 3.352703273296356,
+      "val": 3.508106985995928,
+      "minutes": 13.946550440788268,
+      "machado_val": 3.7932253184130107
+    },
+    {
+      "step": 3254,
+      "train": 3.330126861731211,
+      "val": 3.502723186660184,
+      "minutes": 14.240890689690907,
+      "machado_val": 3.790836035287069
+    }
+  ],
+  "eval": {
+    "machado_val": {
+      "nats_per_token": 3.790836035287069,
+      "bits_per_byte": 1.6279773093864882,
+      "perplexity_per_token": 44.29341565922,
+      "tokens": 382208,
+      "bytes": 1283988
+    },
+    "general_val": {
+      "nats_per_token": 3.502723186660184,
+      "bits_per_byte": 1.5566773289880633,
+      "perplexity_per_token": 33.20575441512956,
+      "tokens": 904960,
+      "bytes": 2937725
+    }
+  },
+  "checkpoint": "best.pt",
+  "checkpoint_sha256": "29794eac53481f3eb10c5110b146b5bec0a5e1017d846b3539641ef4554cd96b",
+  "samples": {
+    "Capitu": "Capitulo Propências Pública das Respeitas Junta são Companhas - John Werens: Wrkere está nos elevadores da Formação Companhian Geral Cientral para observar a proposta estacionada. Os mensais em relação à criação profissional do métodos de cidade invalidada passaram-se contratados de uma direção dos restantes do Governo Wiker, indirectamente relacionados aos alunos artigos “aos símbolos do imitóvel depositaram os termos de segurança pública indivitável” e as acicionistas dos seus dispositivos didáticos são inclusive definitivamente a seguinte:\n\na)posta pela prática de um trabalho, uma finalidade prática mediante que nunca",
+    "Não consultes dicionários.": "Não consultes dicionários. Entretanto não tens temerário das horripiesções sobre o diferente messlógico mineral britânico: a comunicação da arte está nos elevadores da imprensa Cidônicos, esta apara-se a qualidade para a estratégia, esta divulgação com regime radical: criada linguística e convencional e descrita em invalência, passados planos contratados de uma só as imposições literárias de Paris e O WMPE, indiversismo de Campos pesteado e US\n\n\nSobre a infância política do fu, agricola de CCCLION indivitável designativa como registro, democrática e humana comum conquista-se definitivamente a seguinte:\n\nSobreposta pela prática de um trabalho, uma reputação prática, exploração moral"
+  }
+}

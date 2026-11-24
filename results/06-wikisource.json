@@ -1,0 +1,147 @@
+{
+  "dump": "ptwikisource-20261101-pages-articles.xml.bz2",
+  "min_quality": 3,
+  "documents": 24623,
+  "words": 26669178,
+  "characters": 158518372,
+  "words_by_split": {
+    "train": 26200226,
+    "val": 468952
+  },
+  "words_by_source": {
+    "main": 17814223,
+    "scanned": 8854955
+  },
+  "top_authors": [
+    [
+      "(sem autor)",
+      4812228
+    ],
+    [
+      "Vários",
+      829383
+    ],
+    [
+      "Eça de Queirós",
+      795987
+    ],
+    [
+      "Monteiro Lobato",
+      636132
+    ],
+    [
+      "Aluísio Azevedo",
+      635173
+    ],
+    [
+      "Joaquim Manuel de Macedo",
+      582260
+    ],
+    [
+      "Lanling Xiaoxiaosheng",
+      576303
+    ],
+    [
+      "Lima Barreto",
+      556113
+    ],
+    [
+      "Alexandre Herculano",
+      486005
+    ],
+    [
+      "Júlio Dinis",
+      457180
+    ],
+    [
+      "Francisco Ferreira Drummond",
+      431115
+    ],
+    [
+      "José de Alencar",
+      407663
+    ],
+    [
+      "Salvatore D’ Onofrio",
+      407409
+    ],
+    [
+      "Miguel de Cervantes",
+      370382
+    ],
+    [
+      "Artur de Azevedo",
+      355349
+    ],
+    [
+      "Euclides da Cunha",
+      320210
+    ],
+    [
+      "Academia Real das Sciencias de Lisboa",
+      317272
+    ],
+    [
+      "José do Patrocínio",
+      255470
+    ],
+    [
+      "Oliveira Lima",
+      254414
+    ],
+    [
+      "Ana de Castro Osório",
+      253455
+    ],
+    [
+      "António Xavier Pereira Coutinho",
+      233518
+    ],
+    [
+      "S. A. Sisson",
+      231997
+    ],
+    [
+      "Julio Verne",
+      229972
+    ],
+    [
+      "Afonso X",
+      200842
+    ],
+    [
+      "Charles Darwin",
+      200015
+    ]
+  ],
+  "stats": {
+    "documents_read": 25816,
+    "machado_by_author_docs": 1175,
+    "machado_by_author_words": 1236953,
+    "machado_by_text_paragraphs": 634,
+    "machado_by_text_words": 33849,
+    "scanned_words_quality_0": 4315,
+    "scanned_words_quality_1": 8638700,
+    "scanned_words_quality_2": 48204,
+    "scanned_words_quality_3": 7932438,
+    "scanned_words_quality_4": 1215828,
+    "words_read": 27939980
+  },
+  "tokens": {
+    "tokenizer_sha256": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+    "splits": {
+      "train": {
+        "tokens": 53316135,
+        "bytes": 160247149,
+        "bytes_per_token": 3.0056032568752404,
+        "sha256": "544c5c8c4114608a6902f3bb4263ddc39834370e261385cc046b9d0d8b37c7ee"
+      },
+      "val": {
+        "tokens": 905201,
+        "bytes": 2938449,
+        "bytes_per_token": 3.2461839967034947,
+        "sha256": "dd0afdd5d787d22e0cea652fae41a475d768a8ca8b99d13259d6b46d79d4eb98"
+      }
+    }
+  }
+}

@@ -396,3 +396,107 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Checkpoints:** no Drive do proprietário; SHA-256 em `results/05-gpt-bpe-*.json` e no
   diário da etapa.
 - **Responsável:** proprietário.
+
+## 2026-11-23: Bot de conversa fica para projeto futuro
+
+- **Decisão do proprietário:** um bot que converse sobre um assunto específico (ideias:
+  obra de Machado de Assis, notícias de futebol) fica para um projeto futuro, junto com
+  RAG, como o PRD já previa. Este projeto não inclui ajuste por instruções (instruction
+  tuning) nem chat.
+- **Etapa 6 mantida** como proposta: pré-treino (pretraining) no Wikisource em
+  português, sem Machado, e ajuste fino (fine-tuning) com o treino de Machado.
+- **Responsável:** proprietário.
+
+## 2026-11-23: Etapa 6, corpus geral do Wikisource
+
+- **Fonte:** dump do Wikisource em português de 2026-11-01
+  (`ptwikisource-20261101-pages-articles.xml.bz2`), fixado por data e conferido pelo
+  SHA-1 que a Wikimedia publica. Entram as obras digitadas (espaço principal) e os
+  livros escaneados, refeitos juntando as páginas "Página:" na ordem.
+- **Licença:** os textos do Wikisource são de domínio público ou de licença livre; o
+  conteúdo editorial do site (transcrições, traduções feitas por editores) é
+  CC BY-SA. O corpus não é versionado nem redistribuído, e os pesos não são
+  publicados. O proprietário confirmou (2026-11-23) que isso basta para o critério
+  "licença verificada" do PRD, sem verificação obra a obra.
+- **Qualidade:** das páginas escaneadas, só as revisadas ao menos uma vez (nível 3 ou
+  4). O nível 1 é OCR bruto (8,6 milhões de palavras descartadas), o 2 é marcado como
+  problemático e o 0 não tem texto.
+- **Dependência nova:** `mwparserfromhell`, só para analisar o wikitexto (parse
+  tree); não esconde nada do modelo nem do treino.
+- **Machado fora do pré-treino (regra, com testes):** sai todo documento cujo
+  cabeçalho ou índice tem Machado de Assis como autor, e todo parágrafo tocado por 2
+  ou mais sequências de 8 palavras em comum com o corpus de Machado (treino,
+  validação e teste), comparadas com grafia normalizada, para pegar edições em
+  ortografia antiga.
+- **Validação geral:** ~1% dos documentos, por SHA-256 do título, só para acompanhar o
+  pré-treino. A validação e o teste de Machado continuam sendo os da etapa 5.
+- **Tokenizador:** o da etapa 4, treinado só no treino de Machado, sem mudança.
+- **Responsável:** proprietário (escolha da fonte); critérios técnicos propostos
+  pelo agente.
+
+## 2026-11-23: Etapa 6, vazamento de *O Almada* corrigido
+
+- **Achado:** a conferência do corpus já gerado contra a validação e o teste de
+  Machado achou *O Almada* (obra da **validação**) dentro do treino do pré-treino, em
+  um documento sem autor no cabeçalho e com um verso por parágrafo. O filtro contava
+  as sequências de 8 palavras dentro de cada parágrafo, e um verso não tem duas.
+- **Correção:** as sequências passam a correr pelo documento inteiro, atravessando
+  parágrafos, e cada sequência em comum conta para todo parágrafo que ela toca. Teste
+  de regressão em `tests/test_build_general.py`.
+- **Resultado:** o filtro por texto foi de 271 parágrafos (31.385 palavras) para 634
+  (33.849). Na nova conferência, nenhum parágrafo toca 2 ou mais sequências da
+  validação ou do teste de Machado; restam 25 sequências isoladas, todas frases feitas
+  ("cada um puxa a brasa para sua sardinha"), nomes ou citações curtas.
+- **Corpus final:** 24.623 documentos e 26,7 milhões de palavras (26,2 M no treino,
+  0,47 M na validação geral), cerca de 20× o treino de Machado (1,3 M).
+- **Responsável:** agente (achado e correção); revisão pelo proprietário.
+
+## 2026-11-23: Etapa 6, plano do pré-treino e do ajuste fino
+
+- **Aprovado pelo proprietário.** Uma variável muda em relação à etapa 5: o modelo
+  começa pré-treinado. Modelo, tokenizador, validação de Machado e medida (bits por
+  byte) são os mesmos.
+- **Pré-treino (pretraining):** modelo médio (~12 M de parâmetros), 1 volta exata pelo
+  treino geral (janelas sem sobreposição, embaralhadas e sem repetição, ~3.254
+  passos de 16.384 tokens), dropout 0, lr 6·10⁻⁴ com warmup de 200 passos e cosseno
+  até 6·10⁻⁵, sem parada antecipada. O `best.pt` é escolhido pela validação geral; a
+  validação de Machado é só registrada, como curva.
+- **Ajuste fino (fine-tuning):** a partir do `best.pt` do pré-treino, conferido pelo
+  SHA-256 registrado; otimizador novo; lr 2·10⁻⁴ (um terço), warmup de 100 passos,
+  cosseno até 2·10⁻⁵; dropout 0,2; até 3.000 passos com parada antecipada pela
+  validação de Machado (10 avaliações), como na etapa 5. A validação geral é
+  registrada para medir o quanto o modelo esquece. O teste é reportado uma vez.
+- **Comparação:** contra o médio da etapa 5 (validação 1,663 bpb, teste 1,632). Se o
+  ganho for claro, a receita pode ser repetida no pequeno.
+- **Ambiente:** Colab gratuito, T4, com dados regenerados lá e conferidos por SHA-256,
+  como na etapa 5. Checkpoints no Drive do proprietário. Pesos não publicados.
+- **Pendente (ação do proprietário):** novo token *fine-grained* do GitHub, só
+  leitura e só deste repositório, de validade curta, para o Colab clonar o
+  repositório privado; revogar ao fim da etapa.
+- **Responsável:** proprietário.
+
+## 2026-11-24: Etapa 6, resultado
+
+- **Reprodutibilidade:** no Colab, o catálogo de Machado, o tokenizador e os cinco
+  conjuntos (três de Machado e dois gerais) saíram idênticos aos locais pelos SHA-256.
+  Os dois treinos rodaram no commit `d43f5e7`, na T4.
+- **Resultado na validação de Machado:**
+  - etapa 5 (médio, só Machado): 1,663 bpb;
+  - pré-treinado, sem nunca ver Machado: 1,628 bpb;
+  - pré-treinado + ajuste fino: **1,588 bpb** (−4,5%); teste 1,569 bpb (etapa 5:
+    1,632).
+- **Sobreajuste:** a distância entre validação e treino caiu de 0,85 para 0,34 nats.
+- **Esquecimento:** no ajuste fino, a validação geral piorou de 1,557 para 1,803 bpb.
+  É esperado, e não afeta o objetivo.
+- **Uma execução só**, sem medir a variação entre sementes (seeds).
+- **Checkpoints:** no Drive do proprietário; SHA-256 em `results/06-*-medium.json`.
+- **Critérios da etapa 6 do PRD cumpridos.**
+- **Responsável:** proprietário.
+
+## 2026-11-24: Token de leitura da etapa 6 revogado
+
+- **Ação do proprietário:** criou um token *fine-grained* do GitHub, só leitura de
+  conteúdo e só deste repositório, de validade curta, para o Colab clonar o
+  repositório privado na etapa 6; guardado apenas nos Segredos do Colab.
+- **Revogado** pelo proprietário em 2026-11-24, ao fim da etapa 6.
+- **Responsável:** proprietário.

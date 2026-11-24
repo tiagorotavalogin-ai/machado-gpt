@@ -34,6 +34,8 @@ perguntas e não sabe fatos: é um gerador de texto educacional. Veja os limites
 
 ## Documentação
 
+- [docs/visual/machado-gpt.html](docs/visual/machado-gpt.html): as etapas explicadas com
+  demonstrações interativas (abra no navegador; gerada por `uv run python -m machado_gpt.visual`).
 - [docs/PRD.md](docs/PRD.md): objetivo, escopo, etapas e critérios de pronto.
 - [docs/REFERENCIAS.md](docs/REFERENCIAS.md): projetos e materiais de referência.
 - [docs/DECISOES.md](docs/DECISOES.md): registro de decisões.
