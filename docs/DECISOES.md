@@ -450,3 +450,27 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
 - **Corpus final:** 24.623 documentos e 26,7 milhões de palavras (26,2 M no treino,
   0,47 M na validação geral), cerca de 20× o treino de Machado (1,3 M).
 - **Responsável:** agente (achado e correção); revisão pelo proprietário.
+
+## 2026-11-23: Etapa 6, plano do pré-treino e do ajuste fino
+
+- **Aprovado pelo proprietário.** Uma variável muda em relação à etapa 5: o modelo
+  começa pré-treinado. Modelo, tokenizador, validação de Machado e medida (bits por
+  byte) são os mesmos.
+- **Pré-treino (pretraining):** modelo médio (~12 M de parâmetros), 1 volta exata pelo
+  treino geral (janelas sem sobreposição, embaralhadas e sem repetição, ~3.254
+  passos de 16.384 tokens), dropout 0, lr 6·10⁻⁴ com warmup de 200 passos e cosseno
+  até 6·10⁻⁵, sem parada antecipada. O `best.pt` é escolhido pela validação geral; a
+  validação de Machado é só registrada, como curva.
+- **Ajuste fino (fine-tuning):** a partir do `best.pt` do pré-treino, conferido pelo
+  SHA-256 registrado; otimizador novo; lr 2·10⁻⁴ (um terço), warmup de 100 passos,
+  cosseno até 2·10⁻⁵; dropout 0,2; até 3.000 passos com parada antecipada pela
+  validação de Machado (10 avaliações), como na etapa 5. A validação geral é
+  registrada para medir o quanto o modelo esquece. O teste é reportado uma vez.
+- **Comparação:** contra o médio da etapa 5 (validação 1,663 bpb, teste 1,632). Se o
+  ganho for claro, a receita pode ser repetida no pequeno.
+- **Ambiente:** Colab gratuito, T4, com dados regenerados lá e conferidos por SHA-256,
+  como na etapa 5. Checkpoints no Drive do proprietário. Pesos não publicados.
+- **Pendente (ação do proprietário):** novo token *fine-grained* do GitHub, só
+  leitura e só deste repositório, de validade curta, para o Colab clonar o
+  repositório privado; revogar ao fim da etapa.
+- **Responsável:** proprietário.

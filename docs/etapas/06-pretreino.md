@@ -250,8 +250,86 @@ uv run pytest
 
 ---
 
+## 8. Plano do treino (aprovado)
+
+Uma variável muda em relação à etapa 5: o modelo começa pré-treinado. Modelo,
+tokenizador, validação e medida (bits por byte) continuam os mesmos.
+
+### Fase 1: pré-treino
+
+- **Modelo:** o **médio** da etapa 5 (6 camadas (layers), C = 384, ~12 M de
+  parâmetros). É o que mais sofreu com a falta de dados.
+- **Dados:** o treino geral, 53,3 M de tokens.
+- **Duração:** **1 volta**, 3.254 passos de 16.384 tokens. Cada trecho é visto uma
+  vez só, então não há como decorar.
+- **Uma volta de verdade.** Na etapa 5, cada lote (batch) sorteia janelas em
+  posições aleatórias, **com reposição**. Sorteando tantas janelas quanto cabem no
+  texto, cerca de 1/e (37%) do texto nunca é lido e outra parte é lida duas vezes.
+  No Machado, com 36 voltas, isso não importava. Numa volta só, importa. O
+  pré-treino corta o texto em janelas sem sobreposição, embaralha e serve cada uma
+  uma vez (`WindowSampler`). O ajuste fino continua sorteando, como na etapa 5.
+- **Dropout 0.** O dropout existe contra o sobreajuste (overfitting), que não
+  acontece numa volta só. Desligá-lo deixa o modelo aprender mais por passo. É a
+  prática dos pré-treinos de verdade. O dropout não tem pesos, então pode voltar a
+  0,2 no ajuste fino sem mudar nada no modelo.
+- **Taxa de aprendizado (learning rate):** a do médio na etapa 5, 6·10⁻⁴, com
+  warmup de 200 passos e cosseno até 6·10⁻⁵.
+- **O que acompanhar:**
+  - a validação geral, que diz se o modelo está aprendendo português;
+  - a **validação de Machado**, só como curva. Ela mostra quanto o modelo "sabe de
+    Machado" sem nunca tê-lo lido.
+- **Escolha:** o `best.pt` do pré-treino é o de menor perda na validação **geral**
+  (numa volta só, na prática é o do fim). A validação de Machado não decide nada
+  nesta fase.
+
+### Fase 2: ajuste fino (fine-tuning)
+
+- **Partida:** os pesos do fim do pré-treino, com um otimizador (AdamW) novo.
+- **Dados:** o treino de Machado, o mesmo da etapa 5.
+- **Taxa de aprendizado menor, 2·10⁻⁴** (um terço da do pré-treino), com warmup de
+  100 passos e cosseno até 2·10⁻⁵. Uma taxa grande desmancharia o que o pré-treino
+  ensinou; o modelo só precisa se ajustar.
+- **Dropout 0,2**, como na etapa 5: agora o texto se repete e o sobreajuste volta.
+- **Até 3.000 passos**, com parada antecipada (early stopping) pela validação de
+  Machado (10 avaliações sem melhora), como na etapa 5. O teste é reportado uma vez.
+
+### A comparação
+
+| | validação | teste | distância validação − treino |
+|---|---|---|---|
+| etapa 5, médio só Machado | 1,663 bpb | 1,632 bpb | 0,85 nats |
+| pré-treinado, antes do ajuste | ? | | |
+| pré-treinado + ajuste fino | ? | ? | ? |
+
+Mais as amostras (samples) com os mesmos começos da etapa 5 ("Capitu", "Não
+consultes dicionários."). Se o ganho for claro, a mesma receita pode ser repetida no
+pequeno, para ver se a vantagem do tamanho reaparece quando há dados.
+
+### Custo e ambiente
+
+- **Colab gratuito, T4,** como na etapa 5. Tempo estimado: cerca de 13 min de
+  pré-treino e até 12 min de ajuste fino.
+- **Dados regenerados no Colab,** conferidos pelos SHA-256 de
+  `results/06-wikisource.json` e `results/04-bpe.json`: o dump tem 88 MB, e montar e
+  tokenizar o corpus leva cerca de 20 min.
+- **Checkpoints** no Drive do proprietário, como na etapa 5.
+
+### Código
+
+- **Treino:** `train()` da etapa 5 ganha dois parâmetros opcionais: pesos de
+  partida e conjuntos extras para avaliar. Sem eles, o comportamento é o de antes,
+  e os testes da etapa 5 continuam valendo.
+- **Script novo** `train_general.py`, com `--phase pretrain` e `--phase finetune`.
+  Ele confere os dados pelos SHA-256 e grava `results/06-*.json`.
+- **Testes:**
+  - o ajuste fino parte exatamente dos pesos do pré-treino;
+  - o pré-treino recusa dados que não batem com os SHA-256;
+  - retomar dá o mesmo resultado que não parar.
+- **Notebook** `notebooks/06-colab.ipynb`, versionado sem saídas (outputs).
+
+---
+
 ## Próximo passo
 
-Planejar o treino: o pré-treino no corpus geral, o ajuste fino com o treino de
-Machado (taxa de aprendizado (learning rate), número de passos) e a comparação com a
-etapa 5 na mesma validação de Machado.
+Aprovar o plano, implementar o código com testes, rodar um teste curto (smoke run)
+local e depois treinar no Colab.
