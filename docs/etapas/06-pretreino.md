@@ -8,8 +8,8 @@ resultado medido e a lição. As decisões formais estão em
 português, sem Machado, ajustá-lo (fine-tuning) com o treino de Machado e comparar
 com o modelo "só Machado" da etapa 5, na mesma validação (validation).
 
-**Estado:** corpus geral pronto e tokenizado. Pré-treino e ajuste fino ainda não
-rodaram.
+**Estado:** concluída. O pré-treino melhorou a validação de Machado em 4,5% em bits
+por byte e reduziu o sobreajuste (overfitting) a 40% do que era (seção 9).
 
 ---
 
@@ -329,7 +329,125 @@ pequeno, para ver se a vantagem do tamanho reaparece quando há dados.
 
 ---
 
-## Próximo passo
+## 9. Resultados
 
-Aprovar o plano, implementar o código com testes, rodar um teste curto (smoke run)
-local e depois treinar no Colab.
+Os dois treinos rodaram na T4 do Colab, com o código do commit `d43f5e7`. Os dados
+regenerados lá saíram idênticos aos locais (catálogo, tokenizador e os cinco
+conjuntos, pelos SHA-256). O pré-treino levou 14 min (3.254 passos) e o ajuste fino,
+14 min (3.000 passos).
+
+### A comparação
+
+Validação e teste de Machado, os mesmos da etapa 5:
+
+| modelo | validação | teste | distância validação − treino |
+|---|---|---|---|
+| etapa 5: médio, só Machado | 1,663 bpb (3,872 nats) | 1,632 bpb | 0,85 nats |
+| pré-treinado, **sem nunca ver Machado** | 1,628 bpb (3,791 nats) | | |
+| pré-treinado + ajuste fino | **1,588 bpb** (3,697 nats) | **1,569 bpb** | **0,34 nats** |
+
+- **O ganho:** 4,5% na validação (de 1,663 para 1,588 bits por byte) e 3,9% no teste.
+  Para comparar, o médio da etapa 5 ganhava só 2% do pequeno com o triplo de
+  parâmetros.
+- **O sobreajuste caiu a 40%:** a distância entre validação e treino foi de 0,85
+  para 0,34 nats. O modelo decora muito menos o treino de Machado.
+- **Quase metade do ganho (47%) veio antes do ajuste fino.** O modelo que só leu o
+  Wikisource já prevê Machado melhor (1,628) que o modelo treinado 36 voltas no
+  próprio Machado (1,663). Na curva, a validação de Machado do pré-treino passa o
+  melhor ponto da etapa 5 por volta do passo 2.400.
+
+O resultado vem de uma execução só (uma semente (seed)). Não medimos a variação
+entre execuções.
+
+### O que as curvas mostram
+
+**Pré-treino.** As três perdas caem juntas até o fim, sem platô. A validação geral
+ainda caía 0,005 nats nos últimos 54 passos, então mais texto, ou uma segunda volta,
+provavelmente ainda ajudaria. A validação de Machado acompanha a geral de perto,
+cerca de 0,29 nats acima. Aprender português em geral é, em boa parte, aprender
+Machado.
+
+**Ajuste fino.**
+
+- **O começo piora.** A validação de Machado sobe de 3,791 para 3,860 nos primeiros
+  100 passos e só volta ao ponto de partida por volta do passo 800. Duas causas
+  prováveis, não testadas separadamente:
+  - o otimizador AdamW novo começa sem as médias dos gradientes, então os primeiros
+    passos são mal calibrados;
+  - o dropout passa de 0 para 0,2, e o modelo, treinado sem ele, precisa se
+    readaptar.
+- **No fim, ainda melhorando.** O melhor ponto foi o último passo (3.000), e a
+  validação ainda caía, devagar (0,001 nats a cada 100 passos). A parada antecipada
+  (early stopping) não chegou a agir. Quem limitou foi o cosseno, que levou a taxa
+  de aprendizado (learning rate) ao mínimo.
+- **O modelo esquece o português geral.** A validação geral sobe de 3,503 para 4,057
+  nats (de 1,557 para 1,803 bits por byte), quase toda nos primeiros 1.000 passos.
+  Ele troca o português do Wikisource pelo de Machado. É o "esquecimento
+  catastrófico" (catastrophic forgetting) em escala pequena. Para este projeto não
+  importa, porque o que conta é a validação de Machado.
+
+### As amostras
+
+Com o mesmo começo e a mesma semente da etapa 5 (os primeiros 200 símbolos gerados):
+
+- **Pré-treinado, antes do ajuste**, a partir de "Capitu": "Capitulo Propências
+  Pública das Respeitas Junta são Companhas - John Werens: Wrkere está nos
+  elevadores da Formação Companhian Geral…". É o tom do Wikisource: documentos
+  oficiais, nomes estrangeiros, vocabulário técnico.
+- **Depois do ajuste fino**, a partir de "Capitu": "Capitu piedoso, convidou o nosso
+  Rubião o seu amigo o que lhe disse do correspondente; agora passou a dissipar-se
+  que era outro. A baronesa vira todas as horas em que se preparara apaixonado;
+  depois, saíra da sala." Volta o mundo de Machado: Rubião, Iaiá, José Dias, a
+  baronesa, o mais-que-perfeito ("vira", "preparara", "saíra").
+- **Etapa 5, só Machado**, a partir de "Capitu": "Capitu piedosa, em que, se esta
+  palavra sacudia a pica, inclinava-se a pontilha, mas não deixou nada."
+
+As amostras não medem nada: são uma ilustração, não uma métrica. A sintaxe do modelo
+ajustado parece um pouco mais longa e encadeada, mas essa é uma impressão de leitura.
+A medida é a da tabela.
+
+### Lições
+
+- **O limite era de dados, e mais dados resolveram.** O mesmo modelo, com a mesma
+  validação, melhorou sem nenhuma mudança de arquitetura. É a razão de os LLMs serem
+  pré-treinados em quantidades enormes de texto geral.
+- **Texto "de outro autor" ensina o autor.** Sem ver uma linha de Machado, o modelo
+  aprendeu o bastante de português para superar o modelo especializado.
+- **O ajuste fino é uma troca.** O modelo ganha Machado e perde o português geral. Se
+  o objetivo fosse um modelo geral que também escreve como Machado, seria preciso
+  misturar os dois corpora no ajuste fino, ou usar uma taxa de aprendizado menor.
+- **O começo do ajuste fino é frágil.** Aquecer o otimizador por mais passos, ou
+  manter o dropout igual nas duas fases, são os primeiros testes se quisermos tirar
+  mais do ajuste fino.
+
+### Checkpoints
+
+No Drive do proprietário, com os SHA-256 registrados em `results/`:
+
+- pré-treino `best.pt`: `29794eac5348…` (`results/06-pretrain-medium.json`);
+- ajuste fino `best.pt`: `4c4ff379b6b3…` (`results/06-finetune-medium.json`). O
+  ajuste fino registra que partiu exatamente do checkpoint do pré-treino
+  (`init_sha256`).
+
+---
+
+## Etapa 6: critérios de pronto (PRD)
+
+- [x] Corpus geral em português com licença verificada (seção 2 e
+  [DECISOES.md](../DECISOES.md)).
+- [x] Comparação entre "só Machado" e "geral + Machado", na mesma validação e na
+  mesma medida (seção 9).
+
+---
+
+## Próximos passos possíveis
+
+O PRD termina nesta etapa. Se quisermos continuar, estes são os experimentos que os
+resultados sugerem, todos escolhidos só pela validação. O teste já foi usado uma vez
+para esta configuração.
+
+1. **Repetir a receita no modelo pequeno**, para ver se a vantagem do tamanho
+   reaparece quando há dados.
+2. **Pré-treinar por mais tempo**: a validação geral ainda caía no fim da volta.
+3. **Ajuste fino mais longo, ou com outra taxa**: a validação ainda caía no passo
+   3.000.

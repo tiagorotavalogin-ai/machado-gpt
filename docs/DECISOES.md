@@ -474,3 +474,29 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   leitura e só deste repositório, de validade curta, para o Colab clonar o
   repositório privado; revogar ao fim da etapa.
 - **Responsável:** proprietário.
+
+## 2026-11-24: Etapa 6, resultado
+
+- **Reprodutibilidade:** no Colab, o catálogo de Machado, o tokenizador e os cinco
+  conjuntos (três de Machado e dois gerais) saíram idênticos aos locais pelos SHA-256.
+  Os dois treinos rodaram no commit `d43f5e7`, na T4.
+- **Resultado na validação de Machado:**
+  - etapa 5 (médio, só Machado): 1,663 bpb;
+  - pré-treinado, sem nunca ver Machado: 1,628 bpb;
+  - pré-treinado + ajuste fino: **1,588 bpb** (−4,5%); teste 1,569 bpb (etapa 5:
+    1,632).
+- **Sobreajuste:** a distância entre validação e treino caiu de 0,85 para 0,34 nats.
+- **Esquecimento:** no ajuste fino, a validação geral piorou de 1,557 para 1,803 bpb.
+  É esperado, e não afeta o objetivo.
+- **Uma execução só**, sem medir a variação entre sementes (seeds).
+- **Checkpoints:** no Drive do proprietário; SHA-256 em `results/06-*-medium.json`.
+- **Critérios da etapa 6 do PRD cumpridos.**
+- **Responsável:** proprietário.
+
+## 2026-11-24: Token de leitura da etapa 6 revogado
+
+- **Ação do proprietário:** criou um token *fine-grained* do GitHub, só leitura de
+  conteúdo e só deste repositório, de validade curta, para o Colab clonar o
+  repositório privado na etapa 6; guardado apenas nos Segredos do Colab.
+- **Revogado** pelo proprietário em 2026-11-24, ao fim da etapa 6.
+- **Responsável:** proprietário.

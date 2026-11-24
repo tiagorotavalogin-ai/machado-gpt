@@ -1,0 +1,291 @@
+{
+  "phase": "finetune",
+  "size": "medium",
+  "model": {
+    "vocab_size": 4096,
+    "block_size": 256,
+    "n_layer": 6,
+    "n_head": 6,
+    "n_embd": 384,
+    "dropout": 0.2,
+    "tie_weights": true
+  },
+  "parameters": 12318720,
+  "train": {
+    "steps": 3000,
+    "batch_size": 64,
+    "learning_rate": 0.00019999999999999998,
+    "min_learning_rate": 1.9999999999999998e-05,
+    "warmup_steps": 100,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "eval_every": 100,
+    "train_eval_batches": 24,
+    "patience": 10,
+    "save_last_every": 500,
+    "seed": 1337
+  },
+  "git_commit": "d43f5e70c1b9837a74e2c634b954a29f43d5a630",
+  "device": "Tesla T4",
+  "torch": "2.14.1+cu130",
+  "data_sha256": {
+    "tokenizer": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+    "train": "04c378aea5752aa6ab8c9a4798a0d0e05a76710268bd19ce80b3974839b008a9",
+    "val": "455b44c99579616d433517d111f9e619c0e405123e59b6ef9b94abc8bf22768c",
+    "test": "157fe18bf406e22831d27c2586aaa5003df3ad09b965ef0dcb0b9fc797fd043b",
+    "general_train": "544c5c8c4114608a6902f3bb4263ddc39834370e261385cc046b9d0d8b37c7ee",
+    "general_val": "dd0afdd5d787d22e0cea652fae41a475d768a8ca8b99d13259d6b46d79d4eb98"
+  },
+  "init_sha256": "29794eac53481f3eb10c5110b146b5bec0a5e1017d846b3539641ef4554cd96b",
+  "stopped": "max steps",
+  "minutes": 13.915767463048299,
+  "best_step": 3000,
+  "history": [
+    {
+      "step": 0,
+      "train": 3.8996668557325997,
+      "val": 3.790836035287069,
+      "minutes": 0.0563377062479655,
+      "general_val": 3.502723186660184
+    },
+    {
+      "step": 100,
+      "train": 3.8665610353151956,
+      "val": 3.8604934293794217,
+      "minutes": 0.5326875726381938,
+      "general_val": 3.798425748358353
+    },
+    {
+      "step": 200,
+      "train": 3.7924408415953317,
+      "val": 3.8481334831917438,
+      "minutes": 1.0017194469769797,
+      "general_val": 3.888594782504199
+    },
+    {
+      "step": 300,
+      "train": 3.7352690001328788,
+      "val": 3.835025212466118,
+      "minutes": 1.4513795137405396,
+      "general_val": 3.92174413268266
+    },
+    {
+      "step": 400,
+      "train": 3.695477624734243,
+      "val": 3.8238137635462888,
+      "minutes": 1.9091890891393026,
+      "general_val": 3.9589273530995155
+    },
+    {
+      "step": 500,
+      "train": 3.664962480465571,
+      "val": 3.814684066210349,
+      "minutes": 2.3667848189671834,
+      "general_val": 3.976101850755144
+    },
+    {
+      "step": 600,
+      "train": 3.6367395718892417,
+      "val": 3.8024098830021873,
+      "minutes": 2.8281577150026957,
+      "general_val": 3.9920634851091483
+    },
+    {
+      "step": 700,
+      "train": 3.601753145456314,
+      "val": 3.7967366028854053,
+      "minutes": 3.2854347109794615,
+      "general_val": 4.0120948586470675
+    },
+    {
+      "step": 800,
+      "train": 3.5844947397708893,
+      "val": 3.788655847650363,
+      "minutes": 3.7418858726819355,
+      "general_val": 4.01620742819434
+    },
+    {
+      "step": 900,
+      "train": 3.571881224711736,
+      "val": 3.781347398700446,
+      "minutes": 4.198875315984091,
+      "general_val": 4.026357958846248
+    },
+    {
+      "step": 1000,
+      "train": 3.5520077844460807,
+      "val": 3.7708525609746526,
+      "minutes": 4.656534822781881,
+      "general_val": 4.029933965054394
+    },
+    {
+      "step": 1100,
+      "train": 3.522624442974726,
+      "val": 3.7641933770764218,
+      "minutes": 5.1219039758046465,
+      "general_val": 4.034952155602872
+    },
+    {
+      "step": 1200,
+      "train": 3.50547856092453,
+      "val": 3.7565184719037146,
+      "minutes": 5.579684658845266,
+      "general_val": 4.041242424129934
+    },
+    {
+      "step": 1300,
+      "train": 3.4774795373280845,
+      "val": 3.751565185873922,
+      "minutes": 6.037608842055003,
+      "general_val": 4.043150752605778
+    },
+    {
+      "step": 1400,
+      "train": 3.458644151687622,
+      "val": 3.741840942546336,
+      "minutes": 6.49583812157313,
+      "general_val": 4.042537493887852
+    },
+    {
+      "step": 1500,
+      "train": 3.4617747167746225,
+      "val": 3.742487054660028,
+      "minutes": 6.953964491685231,
+      "general_val": 4.055843326293427
+    },
+    {
+      "step": 1600,
+      "train": 3.447970747947693,
+      "val": 3.7374894844152267,
+      "minutes": 7.4183629155159,
+      "general_val": 4.058430357937091
+    },
+    {
+      "step": 1700,
+      "train": 3.427838464577993,
+      "val": 3.730797784885782,
+      "minutes": 7.878356357415517,
+      "general_val": 4.0539071996276075
+    },
+    {
+      "step": 1800,
+      "train": 3.4235467314720154,
+      "val": 3.7256479691277393,
+      "minutes": 8.337183419863383,
+      "general_val": 4.05603091659438
+    },
+    {
+      "step": 1900,
+      "train": 3.413272976875305,
+      "val": 3.7236656194074955,
+      "minutes": 8.794049374262492,
+      "general_val": 4.058518476904366
+    },
+    {
+      "step": 2000,
+      "train": 3.3956668277581534,
+      "val": 3.7185318800561475,
+      "minutes": 9.252288687229157,
+      "general_val": 4.055657052521658
+    },
+    {
+      "step": 2100,
+      "train": 3.3826803267002106,
+      "val": 3.7136886504697704,
+      "minutes": 9.719509704907734,
+      "general_val": 4.057582763499216
+    },
+    {
+      "step": 2200,
+      "train": 3.3848290145397186,
+      "val": 3.7112768624185,
+      "minutes": 10.178408980369568,
+      "general_val": 4.058337268532587
+    },
+    {
+      "step": 2300,
+      "train": 3.3826182881991067,
+      "val": 3.706948967005531,
+      "minutes": 10.636079267660778,
+      "general_val": 4.0553302511298845
+    },
+    {
+      "step": 2400,
+      "train": 3.374318947394689,
+      "val": 3.7061756131478147,
+      "minutes": 11.093463810284932,
+      "general_val": 4.057344048701047
+    },
+    {
+      "step": 2500,
+      "train": 3.3599721590677896,
+      "val": 3.7034548984944062,
+      "minutes": 11.55160247484843,
+      "general_val": 4.057416196658554
+    },
+    {
+      "step": 2600,
+      "train": 3.356086492538452,
+      "val": 3.7017738919727607,
+      "minutes": 12.018020816644032,
+      "general_val": 4.060226515968247
+    },
+    {
+      "step": 2700,
+      "train": 3.3652187387148538,
+      "val": 3.700368647438044,
+      "minutes": 12.475792988141377,
+      "general_val": 4.057174730098568
+    },
+    {
+      "step": 2800,
+      "train": 3.3566570580005646,
+      "val": 3.6985318285462365,
+      "minutes": 12.93347218434016,
+      "general_val": 4.056638540135752
+    },
+    {
+      "step": 2900,
+      "train": 3.3540228803952536,
+      "val": 3.6980497714104623,
+      "minutes": 13.391421616077423,
+      "general_val": 4.054815833538223
+    },
+    {
+      "step": 3000,
+      "train": 3.3543867071469626,
+      "val": 3.6971476683262123,
+      "minutes": 13.849708306789399,
+      "general_val": 4.057432463347827
+    }
+  ],
+  "eval": {
+    "machado_val": {
+      "nats_per_token": 3.6971476683262123,
+      "bits_per_byte": 1.5877427716365067,
+      "perplexity_per_token": 40.332099611904766,
+      "tokens": 382208,
+      "bytes": 1283988
+    },
+    "general_val": {
+      "nats_per_token": 4.057432463347827,
+      "bits_per_byte": 1.8032007649500024,
+      "perplexity_per_token": 57.82565083735616,
+      "tokens": 904960,
+      "bytes": 2937725
+    },
+    "machado_test": {
+      "nats_per_token": 3.6579061076356254,
+      "bits_per_byte": 1.5692904322301622,
+      "perplexity_per_token": 38.780056534344226,
+      "tokens": 306432,
+      "bytes": 1030476
+    }
+  },
+  "checkpoint": "best.pt",
+  "checkpoint_sha256": "4c4ff379b6b359fce4995a29e9cb5c1e5c8abd0a5236d20faacbf790fe6de425",
+  "samples": {
+    "Capitu": "Capitu piedoso, convidou o nosso Rubião o seu amigo o que lhe disse do correspondente; agora passou a dissipar-se que era outro.\n\nA baronesa vira todas as horas em que se preparara apaixonado; depois, saíra da sala.\n\nCom efeito, uma moça mensada em relação à madrinha, acrescentou ela conveniente a feliz confeitar o estado, e passara-se a ficar de pé para ele. Assada de ambos eram ambos uns às em afeição, mas o sentimento de Iaiá fazia peste às vezes mais graves, a moralidade, aqueles cálculos de fu, se a visse de os ter ter abraços, não havendo graça; acostumada a ver-lhe a demora, e muito mais comum que a distinção tornara a esquecer a porta. Viu a carta a Jorge, e José Dias... Emílio vinha a coser, que naquela",
+    "Não consultes dicionários.": "Não consultes dicionários. Entretanto, É verdade, em que, se esta palavra sacudia o nariz ou meio do espírito. Nenhuma potência, masns mal se pode dizer da minha última situação.\n\nNão consenti agora que se prepara esta apaixonada epílogo para mostrar expressões de que se esta divórcio com menino é força dar recordações pasmadas; e conveniente a saber se a invalidez passa a lembrar-se dele um rapazinho, e, sem perder de tamanha palavras, repito, o caso o mérito não é peste das figuras; enfim, a moralidade, aqueles partidos do tempo, é uma sagacidade literária que ela foi, não só agora, desenha a posição vulgar em que fica, de quando em quando, sem comum conquista.\n\nUma semana seguinte, portanto aborrecida de um negócio, se não descreve o sentimento da ilusão, expunha que naquela"
+  }
+}
