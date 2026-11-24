@@ -509,3 +509,19 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   pode reutilizar, mantendo o aviso. Os textos de Machado de Assis estão em domínio
   público; corpus e pesos não são distribuídos.
 - **Responsável:** proprietário.
+
+## 2026-11-24: Histórico reescrito para o login como nome de autor
+
+- **Decisão do proprietário:** antes de tornar o repositório público, o nome de autor e
+  de committer de todos os commits passou a ser o login do GitHub
+  (`tiagorotavalogin-ai`), sem o nome civil. O endereço continua o `noreply` do GitHub.
+- **Efeito:** todos os SHAs mudaram. Os `git_commit` em `results/05-*` e `results/06-*`
+  e as citações nos diários foram trocados, no próprio histórico, pelos commits
+  reescritos equivalentes, conferidos por árvore e mensagem: o código de cada um é
+  idêntico ao que rodou no Colab; só mudam linhas de documentação que citam SHAs.
+  Os SHAs anteriores não são registrados aqui, para não apontar para commits antigos.
+- **Feito pelo agente com aprovação explícita do proprietário:** reescrita com
+  `git filter-branch`, backup em bundle antes, e push forçado de todos os branches
+  remotos. Revisão completa do histórico antes, sem segredos, caminhos da máquina ou
+  dados pessoais (varredura própria por padrões e gitleaks).
+- **Responsável:** proprietário.
