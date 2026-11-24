@@ -207,13 +207,24 @@ def restore_rng(states: dict[str, torch.Tensor], gen: torch.Generator) -> None:
 
 
 def train(model_cfg: GPTConfig, cfg: TrainConfig, train_data: torch.Tensor, val_data: torch.Tensor,
-          out_dir: Path, resume: bool = False) -> dict:
+          out_dir: Path, resume: bool = False, init_state: dict | None = None,
+          extra_eval: dict[str, torch.Tensor] | None = None, sampler=None) -> dict:
     """Runs the loop; returns the history and the reason it stopped. best.pt holds
-    the best model by validation loss."""
+    the best model by validation loss.
+
+    Optional, for stage 6 (without them the loop is exactly stage 5's):
+    - init_state: starting weights (fine-tuning from a pretrained model);
+    - extra_eval: more splits whose exact loss is recorded at each evaluation,
+      without any say in early stopping or in the best checkpoint;
+    - sampler: an object with next_batch() and state()/load_state(), used
+      instead of random windows (one exact pass over a large corpus)."""
     device = train_data.device
     torch.manual_seed(cfg.seed)
     gen = torch.Generator().manual_seed(cfg.seed)
     model = GPT(model_cfg).to(device)
+    if init_state is not None:
+        model.load_state_dict(init_state)
+    extra_eval = extra_eval or {}
     decay = [p for p in model.parameters() if p.dim() >= 2]  # a tied matrix appears once
     no_decay = [p for p in model.parameters() if p.dim() < 2]
     optimizer = torch.optim.AdamW(
@@ -234,6 +245,8 @@ def train(model_cfg: GPTConfig, cfg: TrainConfig, train_data: torch.Tensor, val_
         restore_rng(state["rng"], gen)
         step, history, best_val = state["step"], state["history"], state["best_val"]
         bad_evals, elapsed = state["bad_evals"], state["minutes"]
+        if sampler is not None:
+            sampler.load_state(state["sampler"])
         skip_eval = True  # the evaluation of this step was done before saving
         print(f"resumed at step {step} (best val {best_val:.4f})")
 
@@ -248,6 +261,9 @@ def train(model_cfg: GPTConfig, cfg: TrainConfig, train_data: torch.Tensor, val_
                 "val": val_total / val_n,  # exact, whole validation split
                 "minutes": (time.time() - started) / 60,
             }
+            for name, data in extra_eval.items():
+                total, n = nll_sum(model, data)
+                point[name] = total / n
             history.append(point)
             improved = point["val"] < best_val
             if improved:
@@ -256,7 +272,8 @@ def train(model_cfg: GPTConfig, cfg: TrainConfig, train_data: torch.Tensor, val_
                       "val": best_val}, out_dir / "best.pt")
             else:
                 bad_evals += 1
-            print(f"step {step:5}  train {point['train']:.4f}  val {point['val']:.4f}"
+            extras = "".join(f"  {name} {point[name]:.4f}" for name in extra_eval)
+            print(f"step {step:5}  train {point['train']:.4f}  val {point['val']:.4f}{extras}"
                   f"{'  *best' if improved else ''}  lr {learning_rate(step, cfg):.2e}  "
                   f"{point['minutes']:.1f} min", flush=True)
             if step == cfg.steps:
@@ -268,12 +285,16 @@ def train(model_cfg: GPTConfig, cfg: TrainConfig, train_data: torch.Tensor, val_
                 save({"model": model.state_dict(), "optimizer": optimizer.state_dict(),
                       "scaler": scaler.state_dict(), "rng": rng_states(gen), "step": step,
                       "history": history, "best_val": best_val, "bad_evals": bad_evals,
-                      "minutes": (time.time() - started) / 60}, out_dir / "last.pt")
+                      "minutes": (time.time() - started) / 60,
+                      "sampler": sampler.state() if sampler is not None else None}, out_dir / "last.pt")
         skip_eval = False
 
         for group in optimizer.param_groups:
             group["lr"] = learning_rate(step, cfg)
-        x, y = get_batch(train_data, model_cfg.block_size, cfg.batch_size, gen)
+        if sampler is not None:
+            x, y = sampler.next_batch()
+        else:
+            x, y = get_batch(train_data, model_cfg.block_size, cfg.batch_size, gen)
         with autocast(device):
             _, loss = model(x, y)
         optimizer.zero_grad(set_to_none=True)
