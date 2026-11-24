@@ -1,19 +1,27 @@
-# Política de segurança: preliminar
+# Política de segurança
 
-Este projeto ainda não tem versão publicada, modelo publicado nem serviço em
-produção.
+O código deste projeto é público. Não há versão publicada como pacote, modelo ou pesos
+(weights) publicados, nem serviço em produção. Só a branch `main` é mantida.
 
-## Reporte privado
+## Como reportar uma vulnerabilidade
 
-Antes de convidar uso externo, o proprietário deve habilitar o **GitHub Private
-Vulnerability Reporting** na aba de segurança do repositório e testar o recebimento
-de um reporte.
+Use o reporte privado do GitHub: aba **Security** do repositório → **Report a
+vulnerability**. O reporte chega só ao proprietário.
 
-**Estado: canal ainda não configurado nem testado.** Não use este documento como
-evidência de que já existe um canal ativo.
+**Estado:** canal ativado em 2026-11-24. O recebimento ainda não foi testado com um
+reporte enviado de outra conta.
 
 Não abra issue pública com credenciais ou detalhes que permitam explorar uma
 vulnerabilidade.
+
+## Proteções do repositório
+
+- Varredura de segredos (secret scanning) e bloqueio de push com segredos (push
+  protection) ativos.
+- Alertas do Dependabot ativos; as atualizações são feitas à mão, com o `uv.lock`.
+- A `main` não aceita push forçado nem exclusão (ruleset `proteger-main`).
+- GitHub Actions desativado, porque não há workflows. Se for ativado, o token padrão é
+  só de leitura e pull requests de qualquer colaborador externo precisam de aprovação.
 
 ## Segredos
 

@@ -525,3 +525,20 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   remotos. Revisão completa do histórico antes, sem segredos, caminhos da máquina ou
   dados pessoais (varredura própria por padrões e gitleaks).
 - **Responsável:** proprietário.
+
+## 2026-11-24: Repositório público e proteções do GitHub
+
+- **Ação do proprietário:** tornou o repositório público no GitHub, depois da revisão
+  do histórico, da reescrita do nome de autor e da licença MIT.
+- **Configurações** (parte feita pelo proprietário na interface, parte pelo agente via
+  API com autorização, todas conferidas lendo de volta):
+  - reporte privado de vulnerabilidades e alertas do Dependabot ativos; atualizações
+    automáticas do Dependabot desligadas (versões atualizadas à mão);
+  - secret scanning e push protection ativos;
+  - ruleset `proteger-main`: a branch padrão não aceita push forçado nem exclusão, sem
+    exceções;
+  - GitHub Actions desativado (não há workflows); token padrão só de leitura, sem
+    aprovar pull requests, e aprovação exigida para todo colaborador externo;
+  - Projects e Wiki desligados.
+- **Pendente:** testar o recebimento de um reporte privado a partir de outra conta.
+- **Responsável:** proprietário.
