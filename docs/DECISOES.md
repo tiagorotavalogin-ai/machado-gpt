@@ -500,3 +500,12 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   repositório privado na etapa 6; guardado apenas nos Segredos do Colab.
 - **Revogado** pelo proprietário em 2026-11-24, ao fim da etapa 6.
 - **Responsável:** proprietário.
+
+## 2026-11-24: Licença MIT
+
+- **Decisão do proprietário:** código e documentação sob a licença MIT (`LICENSE`),
+  com o login do GitHub (`tiagorotavalogin-ai`) como titular, sem o nome civil.
+- **Motivo:** licença curta e permissiva, comum em material didático: qualquer pessoa
+  pode reutilizar, mantendo o aviso. Os textos de Machado de Assis estão em domínio
+  público; corpus e pesos não são distribuídos.
+- **Responsável:** proprietário.

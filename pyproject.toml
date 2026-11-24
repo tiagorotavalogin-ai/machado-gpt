@@ -3,6 +3,7 @@ name = "machado-gpt"
 version = "0.1.0"
 description = "A small language model trained from scratch on the works of Machado de Assis."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.12"
 dependencies = [
     "mwparserfromhell>=0.7.2",

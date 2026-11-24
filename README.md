@@ -3,14 +3,15 @@
 Um modelo de linguagem (language model) pequeno, treinado do zero com a obra de Machado de Assis,
 construído passo a passo para aprender como um LLM funciona por dentro.
 
-> **Estado:** etapas 1 a 5 concluídas: corpus, bigrama, GPT por caracteres,
-> tokenizador (tokenizer) BPE e treino no Colab ([notebook](notebooks/05-colab.ipynb)).
-> Validação (validation), em bits por byte: bigrama 3,33, GPT por caracteres 2,22 e GPT
-> BPE de 12 M de parâmetros (parameters) 1,66. A etapa 6 (pré-treino geral) é opcional.
+> **Estado:** as seis etapas estão concluídas. Validação (validation) de Machado, em bits
+> por byte: bigrama 3,33, GPT por caracteres 2,22, GPT BPE de 12 M de parâmetros
+> (parameters) 1,66 e o mesmo modelo com pré-treino (pretraining) no Wikisource e ajuste
+> fino (fine-tuning) com Machado 1,59.
 > Diários:
 > [corpus](docs/etapas/01-corpus.md), [bigrama](docs/etapas/02-bigrama.md),
 > [GPT](docs/etapas/03-gpt-caracteres.md), [BPE](docs/etapas/04-tokenizador-bpe.md),
-> [treino no Colab](docs/etapas/05-treino-colab.md).
+> [treino no Colab](docs/etapas/05-treino-colab.md),
+> [pré-treino](docs/etapas/06-pretreino.md).
 
 ## O que é
 
@@ -30,7 +31,7 @@ perguntas e não sabe fatos: é um gerador de texto educacional. Veja os limites
 3. GPT por caracteres.
 4. Tokenizador BPE próprio.
 5. Treino em GPU e avaliação.
-6. (Opcional) Pré-treino em português geral e fine-tuning com Machado.
+6. Pré-treino no Wikisource em português, sem Machado, e ajuste fino com Machado.
 
 ## Documentação
 
@@ -44,9 +45,37 @@ perguntas e não sabe fatos: é um gerador de texto educacional. Veja os limites
 
 ## Como rodar
 
-_A definir na etapa 1._
+Requisitos: Python 3.12 e [uv](https://docs.astral.sh/uv/). As etapas 1 a 4 rodam na CPU;
+as etapas 5 e 6 treinam na GPU do Google Colab, pelos notebooks. Corpus, tokens e
+checkpoints são gerados localmente e não entram no Git.
+
+```bash
+uv sync                                          # ambiente e dependências
+uv run pytest                                    # testes
+
+# Etapa 1: corpus de Machado (baixa ~31 MB, conferidos por hash)
+uv run python -m machado_gpt.corpus.download
+uv run python -m machado_gpt.corpus.extract $(cd data/raw/luxedo/pdf && ls */*.pdf)  # todas (~6 min)
+uv run python -m machado_gpt.corpus.build        # catálogo e divisão por obra
+
+# Etapas 2 a 4: bigrama, GPT por caracteres e tokenizador BPE
+uv run python -m machado_gpt.bigram
+uv run python -m machado_gpt.train_char          # ~25 min na CPU
+uv run python -m machado_gpt.tokenize_corpus     # treina o BPE no treino e codifica
+
+# Etapa 6: corpus geral (dump do Wikisource, ~88 MB, sem Machado)
+uv run python -m machado_gpt.build_general       # ~12 min
+uv run python -m machado_gpt.tokenize_general
+
+# Página visual com as etapas
+uv run python -m machado_gpt.visual
+```
+
+Os treinos das etapas 5 e 6 estão em [notebooks/05-colab.ipynb](notebooks/05-colab.ipynb)
+e [notebooks/06-colab.ipynb](notebooks/06-colab.ipynb). Cada notebook regenera os dados no
+Colab e confere, por SHA-256, que são idênticos aos registrados em `results/`.
 
 ## Licença
 
-_A definir pelo proprietário antes da publicação._ Os textos de Machado de Assis
-estão em domínio público; a licença do código será escolhida à parte.
+Código e documentação sob a [licença MIT](LICENSE). Os textos de Machado de Assis estão
+em domínio público; o corpus e os pesos (weights) não são distribuídos neste repositório.
