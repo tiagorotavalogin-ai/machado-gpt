@@ -500,3 +500,19 @@ publicação de dados ou pesos). Uma entrada por decisão, mais recente no fim.
   repositório privado na etapa 6; guardado apenas nos Segredos do Colab.
 - **Revogado** pelo proprietário em 2026-11-24, ao fim da etapa 6.
 - **Responsável:** proprietário.
+
+## 2026-11-24: Etapa 6, repetir a receita no modelo pequeno
+
+- **Aprovado pelo proprietário.** Mesma receita do médio, sem nenhuma mudança além do
+  tamanho: pré-treino de 1 volta exata com dropout 0 e lr 10⁻³ (a do pequeno na etapa
+  5), depois ajuste fino com lr de um terço (3,3·10⁻⁴), dropout 0,2 e parada antecipada
+  pela validação de Machado.
+- **Pergunta:** com dados suficientes, a vantagem do médio sobre o pequeno, que na etapa
+  5 era de só 2%, volta a crescer?
+- **Comparação:** contra o pequeno da etapa 5 (validação 1,696 bpb) e contra o médio da
+  etapa 6 (1,588 bpb). Escolha só pela validação; o teste é reportado uma vez.
+- **Notebook:** `notebooks/06-colab.ipynb` ganha o parâmetro `SIZE`; resultados em
+  `results/06-*-small.json`.
+- **Pendente (ação do proprietário):** novo token *fine-grained* do GitHub para o Colab,
+  só leitura e só deste repositório, de validade curta; revogar ao fim.
+- **Responsável:** proprietário.
