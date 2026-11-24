@@ -126,5 +126,22 @@
     "scanned_words_quality_3": 7932438,
     "scanned_words_quality_4": 1215828,
     "words_read": 27939980
+  },
+  "tokens": {
+    "tokenizer_sha256": "06d1b900bca09a8a22962c3e5d66c9e63117251f3bf7d357a9e5d77229976d37",
+    "splits": {
+      "train": {
+        "tokens": 53316135,
+        "bytes": 160247149,
+        "bytes_per_token": 3.0056032568752404,
+        "sha256": "544c5c8c4114608a6902f3bb4263ddc39834370e261385cc046b9d0d8b37c7ee"
+      },
+      "val": {
+        "tokens": 905201,
+        "bytes": 2938449,
+        "bytes_per_token": 3.2461839967034947,
+        "sha256": "dd0afdd5d787d22e0cea652fae41a475d768a8ca8b99d13259d6b46d79d4eb98"
+      }
+    }
   }
 }

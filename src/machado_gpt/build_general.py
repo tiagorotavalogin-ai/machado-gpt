@@ -33,7 +33,6 @@ from pathlib import Path
 
 import mwparserfromhell as mw
 
-from machado_gpt.bigram import load_split
 from machado_gpt.corpus.download import PROJECT_ROOT
 from machado_gpt.wikisource import INDEX, MAIN, PAGE, download, iter_pages, wikitext_to_text
 
@@ -173,6 +172,12 @@ def remove_machado(docs: list[Document], machado_text: str, stats: Counter) -> l
         if paragraphs:
             kept.append(Document(doc.title, doc.source, doc.author, paragraphs))
     return kept
+
+
+def load_split(name: str) -> str:
+    from machado_gpt.bigram import load_split as load  # imported here: bigram pulls in torch
+
+    return load(name)
 
 
 def main() -> None:
